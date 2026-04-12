@@ -1,8 +1,7 @@
-import cv2
+
 import csv
 import os
 import numpy as np
-import face_recognition
 from datetime import datetime
 from PIL import Image
 from flask import Flask, render_template, request, redirect, session, jsonify
