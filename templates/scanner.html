@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Face Scanner</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body style="background: #f5f0e8; text-align: center; padding: 50px;">
+    <h1>Scanning for Faces...</h1>
+    <div style="border: 10px solid #0d1117; border-radius: 20px; overflow: hidden; display: inline-block;">
+        <img src="{{ url_for('video_feed') }}" width="640" height="480">
+    </div>
+    <br><br>
+    <a href="/dashboard" class="btn btn-solid">Back to Records</a>
+</body>
+</html>

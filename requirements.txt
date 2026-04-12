@@ -1,0 +1,7 @@
+Flask
+flask-cors
+gunicorn
+face-recognition
+opencv-python
+numpy
+Pillow
