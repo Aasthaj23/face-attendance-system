@@ -1,230 +1,155 @@
-import csv
 import os
-import numpy as np
+import csv
 from datetime import datetime, timedelta
-from PIL import Image
-from flask import Flask, render_template, request, redirect, jsonify
-import sqlite3
+
+from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 from flask_jwt_extended import (
     JWTManager,
     create_access_token,
     jwt_required,
-    get_jwt_identity
+    get_jwt_identity,
+    verify_jwt_in_request
 )
-import face_recognition
+from flask_sqlalchemy import SQLAlchemy
 
-# ─────────────────────────────────────────────
-# CONFIG
-# ─────────────────────────────────────────────
+# ── App setup ─────────────────────────────────────────────────────────
 app = Flask(__name__)
 
-app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET_KEY", "change-this-in-prod")
+app.config["JWT_SECRET_KEY"]          = os.environ.get("JWT_SECRET_KEY", "4cf445c9cf0a1de286c0b537e5dfcf1d8eeaff8a02380532c1e041c15127bc24")
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=2)
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///attendance.db"  # one DB only
 
+db  = SQLAlchemy(app)
 jwt = JWTManager(app)
 CORS(app)
 
-KNOWN_DIR = "Known"
-CSV_FILE = "attendance.csv"
+# ── API Key (for CV script) ───────────────────────────────────────────
+API_KEY = os.environ.get("API_KEY", "85ba7587e257e99ac59ad97a3e6c1ebfba1a0318ced994a895d4f9f13b28ce7d")
 
-os.makedirs(KNOWN_DIR, exist_ok=True)
+def is_api_request_valid(req) -> bool:
+    return req.headers.get("X-API-Key") == API_KEY
 
+# ── Database model ────────────────────────────────────────────────────
+class AttendanceRecord(db.Model):
+    id        = db.Column(db.Integer,     primary_key=True)
+    name      = db.Column(db.String(100), nullable=False)
+    timestamp = db.Column(db.String(50),  nullable=False)
+    status    = db.Column(db.String(20),  nullable=False)
 
-if not os.path.exists(CSV_FILE):
-    with open(CSV_FILE, "w", newline="") as f:
-        csv.writer(f).writerow(["Name", "Timestamp", "Status"])
+with app.app_context():
+    db.create_all()
 
-
-known_encodings = []
-known_names = []
-
-def load_known_faces():
-    known_encodings.clear()
-    known_names.clear()
-
-    print("Loading known faces...")
-
-    for filename in os.listdir(KNOWN_DIR):
-        if filename.lower().endswith((".jpg", ".png", ".jpeg")):
-            path = os.path.join(KNOWN_DIR, filename)
-            name = os.path.splitext(filename)[0]
-
-            try:
-                img = Image.open(path).convert("RGB")
-                img_array = np.array(img)
-
-                encodings = face_recognition.face_encodings(img_array)
-
-                if encodings:
-                    known_encodings.append(encodings[0])
-                    known_names.append(name)
-                    print(f"Loaded: {name}")
-                else:
-                    print(f"No face in {filename}")
-
-            except Exception as e:
-                print(f"Error loading {filename}: {e}")
-
-load_known_faces()
-
-def init_db():
-    conn = sqlite3.connect("database.db")
-    cursor = conn.cursor()
-
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS attendance (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        date TEXT,
-        time TEXT
-    )
-    """)
-
-    conn.commit()
-    conn.close()
-
-init_db()
-
-# ─────────────────────────────────────────────
-# HELPERS
-# ─────────────────────────────────────────────
-def already_marked_today(name):
+# ── Helpers ───────────────────────────────────────────────────────────
+def already_marked_today(name: str) -> bool:
     today = datetime.now().strftime("%Y-%m-%d")
+    return AttendanceRecord.query.filter(
+        AttendanceRecord.name == name,
+        AttendanceRecord.timestamp.startswith(today)
+    ).first() is not None
 
-    with open(CSV_FILE, "r") as f:
-        for row in csv.DictReader(f):
-            if row["Name"] == name and row["Timestamp"].startswith(today):
-                return True
-    return False
-
-
-def write_attendance(name):
-    now = datetime.now()
-    cutoff = now.replace(hour=9, minute=10, second=0)
-
-    status = "late" if now > cutoff else "present"
-
-    with open(CSV_FILE, "a", newline="") as f:
-        csv.writer(f).writerow([
-            name,
-            now.strftime("%Y-%m-%d %H:%M:%S"),
-            status
-        ])
-
+def write_attendance(name: str) -> str:
+    time_now = datetime.now()
+    cutoff   = time_now.replace(hour=9, minute=10, second=0, microsecond=0)
+    status   = "late" if time_now > cutoff else "present"
+    db.session.add(AttendanceRecord(
+        name      = name,
+        timestamp = time_now.strftime("%Y-%m-%d %H:%M:%S"),
+        status    = status
+    ))
+    db.session.commit()
     return status
 
-# ─────────────────────────────────────────────
-# AUTH (JWT)
-# ─────────────────────────────────────────────
+def is_jwt_valid() -> bool:
+    """Check JWT token from request — returns True/False without raising."""
+    try:
+        verify_jwt_in_request()
+        return True
+    except Exception:
+        return False
+
+# ── Auth ──────────────────────────────────────────────────────────────
 @app.route("/api/login", methods=["POST"])
 def api_login():
-    data = request.get_json()
+    data     = request.get_json(silent=True) or {}
+    username = data.get("username", "").strip()
+    password = data.get("password", "").strip()
 
-    username = data.get("username")
-    password = data.get("password")
-
-    # ⚠️ Replace with DB in real production
     if username == "admin" and password == "1234":
         token = create_access_token(identity=username)
-        return jsonify({
-            "token": token,
-            "user": username
-        })
+        return jsonify({"token": token, "user": username})
 
     return jsonify({"error": "Invalid credentials"}), 401
 
-
-# ─────────────────────────────────────────────
-# FRONTEND ROUTES
-# ─────────────────────────────────────────────
+# ── Frontend routes ───────────────────────────────────────────────────
 @app.route("/")
 def login_page():
     return render_template("login.html")
-
 
 @app.route("/dashboard")
 def dashboard():
     return render_template("attendance.html")
 
-
-# ─────────────────────────────────────────────
-# PROTECTED APIs
-# ─────────────────────────────────────────────
+# ── API: detect / mark attendance ─────────────────────────────────────
+# Accepts EITHER a valid JWT (from dashboard) OR a valid API key (from CV script)
 @app.route("/api/detect", methods=["POST"])
-@jwt_required()
 def detect():
-    data = request.get_json()
+    if not is_jwt_valid() and not is_api_request_valid(request):
+        return jsonify({"error": "Unauthorised"}), 401
 
-    name = data.get("name")
+    data = request.get_json(silent=True) or {}
+    name = data.get("name", "").strip()
 
     if not name:
         return jsonify({"error": "No name provided"}), 400
 
     if already_marked_today(name):
-        return jsonify({"message": "Already marked", "status": "duplicate"})
+        return jsonify({"message": "Already marked today", "status": "duplicate"}), 200
 
     status = write_attendance(name)
+    print(f"[+] Marked: {name} ({status})")
+    return jsonify({"name": name, "status": status}), 200
 
-    return jsonify({
-        "name": name,
-        "status": status
-    })
-
-
+# ── API: full records ─────────────────────────────────────────────────
 @app.route("/api/full_records")
-@jwt_required()
 def full_records():
-    records = []
+    if not is_jwt_valid() and not is_api_request_valid(request):
+        return jsonify({"error": "Unauthorised"}), 401
 
-    try:
-        with open(CSV_FILE, "r") as f:
-            for row in csv.DictReader(f):
-                dt = datetime.strptime(row["Timestamp"], "%Y-%m-%d %H:%M:%S")
+    rows = AttendanceRecord.query.order_by(AttendanceRecord.id.desc()).all()
+    return jsonify([{
+        "name":   r.name,
+        "id":     f"STU-{r.name[:3].upper()}",
+        "date":   datetime.strptime(r.timestamp, "%Y-%m-%d %H:%M:%S").strftime("%d-%m-%Y"),
+        "time":   datetime.strptime(r.timestamp, "%Y-%m-%d %H:%M:%S").strftime("%I:%M %p"),
+        "status": r.status
+    } for r in rows])
 
-                records.append({
-                    "name": row["Name"],
-                    "id": f"STU-{row['Name'][:3].upper()}",
-                    "date": dt.strftime("%d-%m-%Y"),
-                    "time": dt.strftime("%I:%M %p"),
-                    "status": row["Status"]
-                })
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-    return jsonify(records[::-1])
-
-
+# ── API: status ───────────────────────────────────────────────────────
 @app.route("/api/status")
-@jwt_required()
 def status():
+    if not is_jwt_valid() and not is_api_request_valid(request):
+        return jsonify({"error": "Unauthorised"}), 401
+
     today = datetime.now().strftime("%Y-%m-%d")
-    count = 0
-
-    with open(CSV_FILE, "r") as f:
-        count = sum(
-            1 for row in csv.DictReader(f)
-            if row["Timestamp"].startswith(today)
-        )
+    # FIX: count from DB not CSV
+    count = AttendanceRecord.query.filter(
+        AttendanceRecord.timestamp.startswith(today)
+    ).count()
 
     return jsonify({
-        "marked_today": count,
-        "known_faces": len(known_names)
+        "marked_today": count
     })
 
-
+# ── API: reload faces (called by CV script after registration) ────────
 @app.route("/api/reload_faces", methods=["POST"])
-@jwt_required()
 def reload_faces():
-    load_known_faces()
-    return jsonify({
-        "loaded": len(known_names)
-    })
+    if not is_jwt_valid() and not is_api_request_valid(request):
+        return jsonify({"error": "Unauthorised"}), 401
+    # Server doesn't run face recognition — just acknowledge
+    return jsonify({"message": "Acknowledged"}), 200
 
-
-# ─────────────────────────────────────────────
-# RUN
-# ─────────────────────────────────────────────
+# ── Run ───────────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=False)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=False)

@@ -48,61 +48,84 @@
     }
 
     .nav-mark {
-      width: 36px;
-      height: 36px;
+      width: 36px; height: 36px;
       border: 1.5px solid rgba(255,255,255,0.25);
       border-radius: 9px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
     }
 
     .nav-mark svg {
-      width: 18px;
-      height: 18px;
-      fill: none;
-      stroke: white;
-      stroke-width: 1.5;
+      width: 18px; height: 18px;
+      fill: none; stroke: white; stroke-width: 1.5;
     }
 
     .nav-name {
       font-family: 'DM Serif Display', serif;
-      font-size: 20px;
-      color: white;
-      letter-spacing: -0.3px;
+      font-size: 20px; color: white; letter-spacing: -0.3px;
     }
 
     .nav-right {
-      display: flex;
-      align-items: center;
-      gap: 24px;
+      display: flex; align-items: center; gap: 24px;
     }
 
     .nav-date {
       font-size: 12px;
       color: rgba(255,255,255,0.35);
-      font-weight: 300;
-      letter-spacing: 0.5px;
+      font-weight: 300; letter-spacing: 0.5px;
     }
 
-    .nav-avatar {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.1);
-      border: 1.5px solid rgba(255,255,255,0.2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .nav-user {
+      font-size: 13px;
+      color: rgba(255,255,255,0.7);
+      font-weight: 400;
+    }
+
+    /* live badge */
+    .live-badge {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(30,122,67,0.2);
+      border: 1px solid rgba(30,122,67,0.4);
+      border-radius: 20px;
+      padding: 4px 12px;
+    }
+
+    .live-dot {
+      width: 7px; height: 7px;
+      background: #1e7a43; border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+
+    .live-text {
+      font-size: 11px; color: #1e7a43; font-weight: 500;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.3; }
+    }
+
+    /* logout button */
+    .logout-btn {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.08);
+      border: 1.5px solid rgba(255,255,255,0.15);
+      border-radius: 7px;
+      padding: 7px 14px;
+      color: rgba(255,255,255,0.7);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px; font-weight: 500;
       cursor: pointer;
+      transition: all 0.18s;
     }
 
-    .nav-avatar svg {
-      width: 16px;
-      height: 16px;
-      fill: none;
-      stroke: rgba(255,255,255,0.7);
-      stroke-width: 1.5;
+    .logout-btn:hover {
+      background: rgba(255,255,255,0.15);
+      color: white;
+    }
+
+    .logout-btn svg {
+      width: 14px; height: 14px;
+      fill: none; stroke: currentColor; stroke-width: 1.5;
     }
 
     .page {
@@ -117,90 +140,60 @@
       justify-content: space-between;
       margin-bottom: 40px;
       animation: fadeUp 0.5s ease both;
-      gap: 20px;
-      flex-wrap: wrap;
+      gap: 20px; flex-wrap: wrap;
     }
 
     .page-eyebrow {
-      font-size: 11px;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: var(--accent);
-      margin-bottom: 8px;
+      font-size: 11px; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 2px;
+      color: var(--accent); margin-bottom: 8px;
     }
 
     .page-title {
       font-family: 'DM Serif Display', serif;
-      font-size: 48px;
-      line-height: 1;
-      letter-spacing: -1px;
-      color: var(--ink);
+      font-size: 48px; line-height: 1;
+      letter-spacing: -1px; color: var(--ink);
     }
 
-    .page-title em {
-      font-style: italic;
-      color: var(--muted);
-    }
+    .page-title em { font-style: italic; color: var(--muted); }
 
     .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
     }
 
     .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 10px 18px;
-      border-radius: 7px;
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 10px 18px; border-radius: 7px;
       font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      border: none;
-      transition: all 0.18s;
-      text-decoration: none;
+      font-size: 13px; font-weight: 500;
+      cursor: pointer; border: none;
+      transition: all 0.18s; text-decoration: none;
     }
 
     .btn svg {
-      width: 14px;
-      height: 14px;
-      fill: none;
-      stroke: currentColor;
-      stroke-width: 1.8;
-      flex-shrink: 0;
+      width: 14px; height: 14px;
+      fill: none; stroke: currentColor;
+      stroke-width: 1.8; flex-shrink: 0;
     }
 
     .btn-outline {
-      background: white;
-      color: var(--ink);
+      background: white; color: var(--ink);
       border: 1.5px solid var(--line);
     }
 
     .btn-outline:hover {
       border-color: var(--ink);
-      background: var(--ink);
-      color: white;
+      background: var(--ink); color: white;
     }
 
-    .btn-solid {
-      background: var(--ink);
-      color: white;
-    }
+    .btn-solid { background: var(--ink); color: white; }
 
-    .btn-solid:hover {
-      background: #1e2730;
-      transform: translateY(-1px);
-    }
+    .btn-solid:hover { background: #1e2730; transform: translateY(-1px); }
 
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      margin-bottom: 32px;
+      gap: 16px; margin-bottom: 28px;
       animation: fadeUp 0.5s ease 0.08s both;
     }
 
@@ -209,47 +202,35 @@
       border: 1.5px solid var(--line);
       border-radius: 12px;
       padding: 22px 24px;
-      position: relative;
-      overflow: hidden;
+      position: relative; overflow: hidden;
     }
 
     .stat-card::before {
       content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
       border-radius: 12px 12px 0 0;
     }
 
-    .stat-card.total::before { background: var(--ink); }
+    .stat-card.total::before   { background: var(--ink); }
     .stat-card.present::before { background: var(--present-fg); }
-    .stat-card.absent::before { background: var(--absent-fg); }
-    .stat-card.late::before { background: var(--late-fg); }
+    .stat-card.absent::before  { background: var(--absent-fg); }
+    .stat-card.late::before    { background: var(--late-fg); }
 
     .stat-label {
-      font-size: 11px;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      color: var(--muted);
-      margin-bottom: 10px;
+      font-size: 11px; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 1.5px;
+      color: var(--muted); margin-bottom: 10px;
     }
 
     .stat-value {
       font-family: 'DM Serif Display', serif;
-      font-size: 36px;
-      line-height: 1;
-      color: var(--ink);
-      font-style: italic;
+      font-size: 36px; line-height: 1;
+      color: var(--ink); font-style: italic;
     }
 
     .stat-sub {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 6px;
-      font-weight: 300;
+      font-size: 12px; color: var(--muted);
+      margin-top: 6px; font-weight: 300;
     }
 
     .chart-card {
@@ -262,31 +243,22 @@
     }
 
     .toolbar {
-      display: flex;
-      align-items: center;
+      display: flex; align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 20px;
+      gap: 16px; margin-bottom: 20px;
       animation: fadeUp 0.5s ease 0.14s both;
       flex-wrap: wrap;
     }
 
     .search-wrap {
-      position: relative;
-      flex: 1;
-      max-width: 320px;
+      position: relative; flex: 1; max-width: 320px;
     }
 
     .search-wrap svg {
-      position: absolute;
-      left: 14px;
-      top: 50%;
+      position: absolute; left: 14px; top: 50%;
       transform: translateY(-50%);
-      width: 15px;
-      height: 15px;
-      fill: none;
-      stroke: var(--muted);
-      stroke-width: 1.8;
+      width: 15px; height: 15px;
+      fill: none; stroke: var(--muted); stroke-width: 1.8;
       pointer-events: none;
     }
 
@@ -297,31 +269,22 @@
       border: 1.5px solid var(--line);
       border-radius: 7px;
       font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
-      color: var(--ink);
-      outline: none;
-      transition: border-color 0.2s;
+      font-size: 13px; color: var(--ink);
+      outline: none; transition: border-color 0.2s;
     }
 
     .search-wrap input::placeholder { color: #bbb5a8; }
     .search-wrap input:focus { border-color: var(--ink); }
 
     .filter-tabs {
-      display: flex;
-      background: white;
+      display: flex; background: white;
       border: 1.5px solid var(--line);
-      border-radius: 7px;
-      overflow: hidden;
-      flex-wrap: wrap;
+      border-radius: 7px; overflow: hidden;
     }
 
     .filter-tab {
-      padding: 9px 18px;
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--muted);
-      cursor: pointer;
-      border: none;
+      padding: 9px 18px; font-size: 12px; font-weight: 500;
+      color: var(--muted); cursor: pointer; border: none;
       background: transparent;
       font-family: 'DM Sans', sans-serif;
       transition: all 0.18s;
@@ -335,54 +298,37 @@
     .table-card {
       background: white;
       border: 1.5px solid var(--line);
-      border-radius: 12px;
-      overflow: hidden;
+      border-radius: 12px; overflow: hidden;
       animation: fadeUp 0.5s ease 0.2s both;
     }
 
     .table-head-bar {
-      display: flex;
-      align-items: center;
+      display: flex; align-items: center;
       justify-content: space-between;
       padding: 16px 24px;
       border-bottom: 1.5px solid var(--line);
     }
 
-    .table-count {
-      font-size: 12px;
-      color: var(--muted);
-    }
+    .table-count { font-size: 12px; color: var(--muted); }
+    .table-count strong { color: var(--ink); font-weight: 600; }
 
-    .table-count strong {
-      color: var(--ink);
-      font-weight: 600;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
+    table { width: 100%; border-collapse: collapse; }
 
     thead th {
-      padding: 12px 20px;
-      text-align: left;
-      font-size: 10px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      color: var(--muted);
-      background: #faf8f4;
+      padding: 12px 20px; text-align: left;
+      font-size: 10px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 1.5px;
+      color: var(--muted); background: #faf8f4;
       border-bottom: 1.5px solid var(--line);
       white-space: nowrap;
     }
 
     thead th:first-child { padding-left: 24px; }
-    thead th:last-child { padding-right: 24px; text-align: right; }
+    thead th:last-child  { padding-right: 24px; text-align: right; }
 
     tbody tr {
       border-bottom: 1px solid var(--line);
       transition: background 0.15s;
-      animation: fadeUp 0.4s ease both;
     }
 
     tbody tr:last-child { border-bottom: none; }
@@ -390,129 +336,109 @@
 
     tbody td {
       padding: 14px 20px;
-      font-size: 13.5px;
-      color: var(--ink);
+      font-size: 13.5px; color: var(--ink);
       vertical-align: middle;
     }
 
     tbody td:first-child { padding-left: 24px; }
-    tbody td:last-child { padding-right: 24px; text-align: right; }
+    tbody td:last-child  { padding-right: 24px; text-align: right; }
 
-    .student-cell {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+    .student-cell { display: flex; align-items: center; gap: 12px; }
 
     .avatar {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 34px; height: 34px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
       font-family: 'DM Serif Display', serif;
-      font-size: 13px;
-      font-style: italic;
-      flex-shrink: 0;
-      color: white;
+      font-size: 13px; font-style: italic;
+      flex-shrink: 0; color: white;
     }
 
-    .student-name {
-      font-weight: 500;
-      font-size: 14px;
-    }
-
-    .student-id {
-      font-size: 11px;
-      color: var(--muted);
-      font-weight: 300;
-    }
+    .student-name { font-weight: 500; font-size: 14px; }
+    .student-id   { font-size: 11px; color: var(--muted); font-weight: 300; }
 
     .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.3px;
-      text-transform: capitalize;
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 10px; border-radius: 20px;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.3px; text-transform: capitalize;
     }
 
     .badge-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      flex-shrink: 0;
+      width: 6px; height: 6px;
+      border-radius: 50%; flex-shrink: 0;
     }
 
     .badge.present { background: var(--present-bg); color: var(--present-fg); }
     .badge.present .badge-dot { background: var(--present-fg); }
-
-    .badge.absent { background: var(--absent-bg); color: var(--absent-fg); }
-    .badge.absent .badge-dot { background: var(--absent-fg); }
-
-    .badge.late { background: var(--late-bg); color: var(--late-fg); }
-    .badge.late .badge-dot { background: var(--late-fg); }
+    .badge.absent  { background: var(--absent-bg);  color: var(--absent-fg); }
+    .badge.absent  .badge-dot { background: var(--absent-fg); }
+    .badge.late    { background: var(--late-bg);    color: var(--late-fg); }
+    .badge.late    .badge-dot { background: var(--late-fg); }
 
     .time-text { font-size: 13px; color: var(--ink); font-weight: 400; }
     .date-text { font-size: 12px; color: var(--muted); font-weight: 300; }
 
     .empty-state {
-      padding: 60px 24px;
-      text-align: center;
-      display: none;
+      padding: 60px 24px; text-align: center; display: none;
     }
 
     .empty-state svg {
-      width: 40px;
-      height: 40px;
-      fill: none;
-      stroke: var(--line);
-      stroke-width: 1.2;
+      width: 40px; height: 40px;
+      fill: none; stroke: var(--line); stroke-width: 1.2;
       margin-bottom: 12px;
     }
 
-    .empty-state p {
-      font-size: 14px;
-      color: var(--muted);
-    }
+    .empty-state p { font-size: 14px; color: var(--muted); }
 
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(14px); }
-      to { opacity: 1; transform: translateY(0); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
     @media (max-width: 768px) {
-      .nav { padding: 0 20px; }
-      .page { padding: 28px 16px 60px; }
+      .nav   { padding: 0 20px; }
+      .page  { padding: 28px 16px 60px; }
       .stats-grid { grid-template-columns: repeat(2, 1fr); }
       .page-title { font-size: 36px; }
       .toolbar { flex-direction: column; align-items: stretch; }
       .search-wrap { max-width: 100%; }
+      .live-badge { display: none; }
     }
   </style>
 </head>
 <body>
+
   <nav class="nav">
     <a class="nav-brand" href="/dashboard">
       <div class="nav-mark">
-        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        <svg viewBox="0 0 24 24">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
       </div>
       <span class="nav-name">AttendanceOS</span>
     </a>
     <div class="nav-right">
-        <span id="navUser" style="color:white; font-size:13px;"></span>
-        <span class="nav-date" id="navDate"></span>
-        <div class="nav-avatar" id="logoutBtn" title="Logout">
-        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      </a>
+      <!-- Live camera indicator -->
+      <div class="live-badge">
+        <span class="live-dot"></span>
+        <span class="live-text">Camera Live</span>
+      </div>
+      <span class="nav-user" id="navUser"></span>
+      <span class="nav-date" id="navDate"></span>
+      <!-- FIX: proper logout button, not broken <a> tag -->
+      <button class="logout-btn" id="logoutBtn">
+        <svg viewBox="0 0 24 24">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        Logout
+      </button>
     </div>
   </nav>
 
   <div class="page">
+
     <div class="page-header">
       <div>
         <p class="page-eyebrow">Dashboard</p>
@@ -527,19 +453,22 @@
           </svg>
           Export
         </button>
-
-        <button class="btn btn-solid" onclick="window.location.reload()">
-          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <button class="btn btn-solid" onclick="loadData()">
+          <svg viewBox="0 0 24 24">
+            <polyline points="23 4 23 10 17 10"/>
+            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+          </svg>
           Refresh
         </button>
       </div>
     </div>
 
+    <!-- Stats -->
     <div class="stats-grid">
       <div class="stat-card total">
         <div class="stat-label">Total Records</div>
         <div class="stat-value" id="countTotal">—</div>
-        <div class="stat-sub">Loaded from attendance log</div>
+        <div class="stat-sub">All time entries</div>
       </div>
       <div class="stat-card present">
         <div class="stat-label">Present Today</div>
@@ -549,7 +478,7 @@
       <div class="stat-card absent">
         <div class="stat-label">Absent</div>
         <div class="stat-value" id="countAbsent">—</div>
-        <div class="stat-sub">No absent records in CSV unless added manually</div>
+        <div class="stat-sub">Not checked in</div>
       </div>
       <div class="stat-card late">
         <div class="stat-label">Late</div>
@@ -558,13 +487,18 @@
       </div>
     </div>
 
+    <!-- Chart -->
     <div class="chart-card">
       <canvas id="attendanceChart" height="110"></canvas>
     </div>
 
+    <!-- Toolbar -->
     <div class="toolbar">
       <div class="search-wrap">
-        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <svg viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
         <input type="text" id="searchInput" placeholder="Search student name…">
       </div>
       <div class="filter-tabs">
@@ -575,9 +509,13 @@
       </div>
     </div>
 
+    <!-- Table -->
     <div class="table-card">
       <div class="table-head-bar">
-        <span class="table-count">Showing <strong id="visibleCount">0</strong> of <strong id="totalCount">0</strong> records</span>
+        <span class="table-count">
+          Showing <strong id="visibleCount">0</strong>
+          of <strong id="totalCount">0</strong> records
+        </span>
       </div>
       <table>
         <thead>
@@ -592,57 +530,82 @@
         <tbody id="tableBody"></tbody>
       </table>
       <div class="empty-state" id="emptyState">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <svg viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
         <p>No records match your search.</p>
       </div>
     </div>
+
   </div>
 
   <script>
+    // ── Constants ─────────────────────────────────────────────────
     const COLORS = ['#2d6a8a','#a0522d','#2e7d5e','#7b4ea6','#c0722a','#3d6b99'];
-    let students = [];
+
+    let students      = [];
     let currentFilter = 'all';
-    let attendanceChart = null;
-    // 🔐 Login check
-    if (!localStorage.getItem("loggedIn")) {
-      window.location.href = "/login.html";
+    let chartInstance = null;
+
+    // ── Auth helpers ──────────────────────────────────────────────
+    function getToken() {
+      return localStorage.getItem("token");
     }
 
-    const token = localStorage.getItem("token");
+    // FIX: single auth header function used everywhere
+    function authHeaders() {
+      return {
+        "Content-Type":  "application/json",
+        "Authorization": "Bearer " + getToken()
+      };
+    }
 
-    const res = await fetch('/api/full_records', {
-      headers: {
-        "Authorization": "Bearer " + token
-      }
-    });
+    function logout() {
+      // FIX: clear token not "loggedIn"
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/";   // FIX: Flask route not /login.html
+    }
 
-    // 🚪 Logout
-    document.addEventListener("DOMContentLoaded", () => {
-      document.getElementById("logoutBtn").addEventListener("click", () => {
-        localStorage.removeItem("loggedIn");
-        localStorage.removeItem("user");
-        window.location.href = "/login.html";
-     });
-    });
+    // FIX: check token exists on page load — not "loggedIn"
+    if (!getToken()) {
+      window.location.href = "/";
+    }
+
+    // ── Nav setup ─────────────────────────────────────────────────
+    document.getElementById("navUser").textContent =
+      localStorage.getItem("user") || "";
+
+    document.getElementById("navDate").textContent =
+      new Date().toLocaleDateString("en-IN", {
+        weekday: "long", day: "numeric",
+        month: "long",  year: "numeric"
+      });
+
+    // FIX: logout button properly wired
+    document.getElementById("logoutBtn").addEventListener("click", logout);
+
+    // ── Helpers ───────────────────────────────────────────────────
     function initials(name) {
-      return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+      return name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
     }
 
     function renderRows(list) {
-      const tbody = document.getElementById('tableBody');
-      const empty = document.getElementById('emptyState');
-      document.getElementById('visibleCount').textContent = list.length;
+      const tbody = document.getElementById("tableBody");
+      const empty = document.getElementById("emptyState");
+      document.getElementById("visibleCount").textContent = list.length;
 
       if (list.length === 0) {
-        tbody.innerHTML = '';
-        empty.style.display = 'block';
+        tbody.innerHTML = "";
+        empty.style.display = "block";
         return;
       }
 
-      empty.style.display = 'none';
-
+      empty.style.display = "none";
       tbody.innerHTML = list.map((s, i) => `
-        <tr data-status="${s.status}">
+        <tr>
           <td>
             <div class="student-cell">
               <div class="avatar" style="background:${COLORS[i % COLORS.length]}">
@@ -664,135 +627,145 @@
           </td>
           <td></td>
         </tr>
-      `).join('');
+      `).join("");
     }
 
     function updateStats() {
-      const present = students.filter(s => s.status === 'present').length;
-      const absent = students.filter(s => s.status === 'absent').length;
-      const late = students.filter(s => s.status === 'late').length;
+      const present = students.filter(s => s.status === "present").length;
+      const absent  = students.filter(s => s.status === "absent").length;
+      const late    = students.filter(s => s.status === "late").length;
 
-      document.getElementById('countTotal').textContent = students.length;
-      document.getElementById('countPresent').textContent = present;
-      document.getElementById('countAbsent').textContent = absent;
-      document.getElementById('countLate').textContent = late;
-      document.getElementById('totalCount').textContent = students.length;
+      document.getElementById("countTotal").textContent   = students.length;
+      document.getElementById("countPresent").textContent = present;
+      document.getElementById("countAbsent").textContent  = absent;
+      document.getElementById("countLate").textContent    = late;
+      document.getElementById("totalCount").textContent   = students.length;
     }
 
     function applyFilters() {
-      const q = document.getElementById('searchInput').value.toLowerCase();
-
+      const q = document.getElementById("searchInput").value.toLowerCase();
       const filtered = students.filter(s => {
-        const matchFilter = currentFilter === 'all' || s.status === currentFilter;
+        const matchFilter = currentFilter === "all" || s.status === currentFilter;
         const matchSearch = s.name.toLowerCase().includes(q);
         return matchFilter && matchSearch;
       });
-
       renderRows(filtered);
     }
 
+    // FIX: update chart data instead of destroying and recreating
+    function updateChart() {
+      const present = students.filter(s => s.status === "present").length;
+      const late    = students.filter(s => s.status === "late").length;
+      const absent  = students.filter(s => s.status === "absent").length;
+
+      if (chartInstance) {
+        chartInstance.data.datasets[0].data = [present, late, absent];
+        chartInstance.update();
+        return;
+      }
+
+      chartInstance = new Chart(
+        document.getElementById("attendanceChart").getContext("2d"), {
+          type: "doughnut",
+          data: {
+            labels: ["Present", "Late", "Absent"],
+            datasets: [{
+              data: [present, late, absent],
+              backgroundColor: ["#1e7a43", "#9a6e00", "#c84b31"],
+              borderWidth: 0
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { position: "bottom" } },
+            cutout: "70%"
+          }
+        }
+      );
+    }
+
+    // FIX: all fetches now send JWT token via authHeaders()
     async function loadData() {
       try {
-        const res = await fetch('/api/full_records');
+        const res = await fetch("/api/full_records", {
+          headers: authHeaders()
+        });
 
-        if (!res.ok) {
-          throw new Error('Failed to load records');
+        // FIX: redirect to login if token expired
+        if (res.status === 401) {
+          logout();
+          return;
         }
+
+        if (!res.ok) throw new Error("Server error: " + res.status);
 
         const data = await res.json();
 
         students = data.map((d, i) => ({
-          name: d.name,
-          id: d.id || ("AUTO-" + (i + 1)),
-          date: d.date,
-          time: d.time,
+          name:   d.name,
+          id:     d.id || ("STU-" + (i + 1)),
+          date:   d.date,
+          time:   d.time,
           status: (d.status || "present").toLowerCase()
         }));
 
         updateStats();
-        renderRows(students);
-        drawChart();
+        applyFilters();
+        updateChart();
+
       } catch (err) {
         console.error("Error loading data:", err);
       }
     }
 
-    function drawChart() {
-      const present = students.filter(s => s.status === 'present').length;
-      const late = students.filter(s => s.status === 'late').length;
-      const absent = students.filter(s => s.status === 'absent').length;
+    // FIX: export also sends JWT token
+    async function exportCSV() {
+      try {
+        const res = await fetch("/api/full_records", {
+          headers: authHeaders()
+        });
 
-      const ctx = document.getElementById('attendanceChart').getContext('2d');
+        if (res.status === 401) { logout(); return; }
 
-      if (attendanceChart) {
-        attendanceChart.destroy();
+        const data = await res.json();
+        let csv = "Name,Date,Time,Status\n";
+        data.forEach(r => {
+          csv += `${r.name},${r.date},${r.time},${r.status}\n`;
+        });
+
+        const blob = new Blob([csv], { type: "text/csv" });
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement("a");
+        a.href     = url;
+        a.download = `attendance_${new Date().toISOString().slice(0,10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+
+      } catch (err) {
+        console.error("Export failed:", err);
       }
-
-      attendanceChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: ['Present', 'Late', 'Absent'],
-          datasets: [{
-            data: [present, late, absent],
-            backgroundColor: ['#1e7a43', '#9a6e00', '#c84b31'],
-            borderWidth: 0
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              position: 'bottom'
-            }
-          }
-        }
-      });
     }
 
-    function exportCSV() {
-      fetch('/api/full_records')
-        .then(res => res.json())
-        .then(data => {
-          let csv = "Name,Date,Time,Status\n";
-
-          data.forEach(r => {
-            csv += `${r.name},${r.date},${r.time},${r.status}\n`;
-          });
-
-          const blob = new Blob([csv], { type: 'text/csv' });
-          const url = URL.createObjectURL(blob);
-
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = "attendance.csv";
-          a.click();
-
-          URL.revokeObjectURL(url);
-        })
-        .catch(err => console.error("Export failed:", err));
-    }
-
-    document.querySelectorAll('.filter-tab').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+    // ── Filter tabs ───────────────────────────────────────────────
+    document.querySelectorAll(".filter-tab").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".filter-tab")
+          .forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
         currentFilter = btn.dataset.filter;
         applyFilters();
       });
     });
 
-    document.getElementById('searchInput').addEventListener('input', applyFilters);
+    // ── Search ────────────────────────────────────────────────────
+    document.getElementById("searchInput")
+      .addEventListener("input", applyFilters);
 
-    const d = new Date();
-    document.getElementById('navDate').textContent =
-      d.toLocaleDateString('en-IN', {
-        weekday: 'long',
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-      });
-
+    // ── Init ──────────────────────────────────────────────────────
     loadData();
+
+    // Auto-refresh every 5 seconds
+    setInterval(loadData, 5000);
   </script>
 </body>
 </html>
