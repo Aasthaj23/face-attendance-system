@@ -501,46 +501,47 @@
       </div>
     </div>
   </div>
+<script>
+document.getElementById("loginForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
 
-  <script>
-    document.getElementById("loginForm").addEventListener("submit", async function(e) {
-      e.preventDefault();
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+  const errorMsg = document.getElementById("errorMsg");
 
-      const username = document.getElementById("username").value;
-      const password = document.getElementById("password").value;
-      const errorMsg = document.getElementById("errorMsg");
-      const serverError = document.getElementById("serverError");
+  errorMsg.style.display = "none";
 
-      if (serverError) serverError.style.display = "none";
-      errorMsg.style.display = "none";
-
-      try {
-        const res = await fetch("/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-          },
-          body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
-        });
-
-        if (res.redirected) {
-          window.location.href = res.url;
-        } else {
-          errorMsg.style.display = "block";
-        }
-      } catch (err) {
-        console.error(err);
-        errorMsg.style.display = "block";
-      }
+  try {
+    const res = await fetch("/api/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        username: username,
+        password: password
+      })
     });
 
-    function updateClock() {
-      const now = new Date();
-      document.getElementById('clock').textContent =
-        now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+    const data = await res.json();
+
+    if (res.ok && data.token) {
+      // ✅ STORE JWT TOKEN
+      localStorage.setItem("token", data.token);
+
+      // OPTIONAL: store user
+      localStorage.setItem("user", username);
+
+      window.location.href = "/attendance.html";
+    } else {
+      errorMsg.style.display = "block";
     }
-    updateClock();
-    setInterval(updateClock, 1000);
-  </script>
+
+  } catch (err) {
+    console.error(err);
+    errorMsg.style.display = "block";
+  }
+});
+</script>
 </body>
 </html>

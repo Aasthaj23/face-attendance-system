@@ -504,8 +504,9 @@
       <span class="nav-name">AttendanceOS</span>
     </a>
     <div class="nav-right">
-      <span class="nav-date" id="navDate"></span>
-      <a href="/logout" class="nav-avatar" title="Logout">
+        <span id="navUser" style="color:white; font-size:13px;"></span>
+        <span class="nav-date" id="navDate"></span>
+        <div class="nav-avatar" id="logoutBtn" title="Logout">
         <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       </a>
     </div>
@@ -602,7 +603,27 @@
     let students = [];
     let currentFilter = 'all';
     let attendanceChart = null;
+    // 🔐 Login check
+    if (!localStorage.getItem("loggedIn")) {
+      window.location.href = "/login.html";
+    }
 
+    const token = localStorage.getItem("token");
+
+    const res = await fetch('/api/full_records', {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+
+    // 🚪 Logout
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("logoutBtn").addEventListener("click", () => {
+        localStorage.removeItem("loggedIn");
+        localStorage.removeItem("user");
+        window.location.href = "/login.html";
+     });
+    });
     function initials(name) {
       return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
     }
