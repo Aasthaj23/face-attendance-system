@@ -726,7 +726,8 @@
       }
 
       chartInstance = new Chart(
-        document.getElementById("attendanceChart").getContext("2d"), {
+        document.getElementById("attendanceChart").getContext("2d"),
+       {
           type: "doughnut",
           data: {
             labels: ["Present", "Absent"],
@@ -736,24 +737,22 @@
               borderWidth: 0
             }]
           },
-          options: {
-            responsive: true,
-            maintainAspectRatio: true,   // FIX: was missing
-            plugins: {
-              legend: { position: "bottom" },
-              // Show count in center
-              tooltip: {
-                callbacks: {
-                  label: ctx => ` ${ctx.label}: ${ctx.parsed}`
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: { position: "bottom" },
+            tooltip: {
+              callbacks: {
+                label: ctx => ` ${ctx.label}: ${ctx.parsed}`
             }
           }
-          },
+        },
         cutout: "65%"
       }
     }
   );
 }
-
     async function loadData() {
       try {
         const res = await fetch("/api/full_records", { headers: authHeaders() });

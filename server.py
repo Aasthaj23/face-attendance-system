@@ -30,7 +30,7 @@ CORS(app)
 API_KEY       = os.environ.get("API_KEY", "85ba7587e257e99ac59ad97a3e6c1ebfba1a0318ced994a895d4f9f13b28ce7d")
 KNOWN_DIR     = "Known"
 STUDENTS_FILE = "students.json"
-THRESHOLD     = 0.5
+
 
 os.makedirs(KNOWN_DIR, exist_ok=True)
 
