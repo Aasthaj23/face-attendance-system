@@ -17,328 +17,231 @@
       --present-fg: #1e7a43;
       --absent-bg:  #fdf0ee;
       --absent-fg:  #c84b31;
+      --late-bg:    #fff8e6;
+      --late-fg:    #b45309;
     }
 
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--paper);
-      min-height: 100vh;
-      color: var(--ink);
-    }
+    body { font-family: 'DM Sans', sans-serif; background: var(--paper); min-height: 100vh; color: var(--ink); }
 
+    /* ── Nav ── */
     .nav {
-      background: var(--ink);
-      display: flex; align-items: center;
-      justify-content: space-between;
-      padding: 0 48px; height: 64px;
+      background: var(--ink); display: flex; align-items: center;
+      justify-content: space-between; padding: 0 48px; height: 64px;
       position: sticky; top: 0; z-index: 100;
     }
-
-    .nav-brand {
-      display: flex; align-items: center;
-      gap: 12px; text-decoration: none;
-    }
-
-    .nav-mark {
-      width: 36px; height: 36px;
-      border: 1.5px solid rgba(255,255,255,0.25);
-      border-radius: 9px;
-      display: flex; align-items: center; justify-content: center;
-    }
-
+    .nav-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .nav-mark { width: 36px; height: 36px; border: 1.5px solid rgba(255,255,255,0.25); border-radius: 9px; display: flex; align-items: center; justify-content: center; }
     .nav-mark svg { width: 18px; height: 18px; fill: none; stroke: white; stroke-width: 1.5; }
     .nav-name { font-family: 'DM Serif Display', serif; font-size: 20px; color: white; }
     .nav-right { display: flex; align-items: center; gap: 16px; }
     .nav-date { font-size: 12px; color: rgba(255,255,255,0.35); font-weight: 300; }
     .nav-user { font-size: 13px; color: rgba(255,255,255,0.7); }
-
     .logout-btn {
       display: flex; align-items: center; gap: 6px;
-      background: rgba(255,255,255,0.08);
-      border: 1.5px solid rgba(255,255,255,0.15);
-      border-radius: 7px; padding: 7px 14px;
-      color: rgba(255,255,255,0.7);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 12px; font-weight: 500;
+      background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.15);
+      border-radius: 7px; padding: 7px 14px; color: rgba(255,255,255,0.7);
+      font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500;
       cursor: pointer; transition: all 0.18s;
     }
-
     .logout-btn:hover { background: rgba(255,255,255,0.15); color: white; }
     .logout-btn svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.5; }
 
-    .page { max-width: 1100px; margin: 0 auto; padding: 48px 32px 80px; }
+    /* ── Page ── */
+    .page { max-width: 1200px; margin: 0 auto; padding: 48px 32px 80px; }
 
     .page-header {
-      display: flex; align-items: flex-end;
-      justify-content: space-between;
-      margin-bottom: 40px;
-      animation: fadeUp 0.5s ease both;
+      display: flex; align-items: flex-end; justify-content: space-between;
+      margin-bottom: 40px; animation: fadeUp 0.5s ease both;
       gap: 20px; flex-wrap: wrap;
     }
-
-    .page-eyebrow {
-      font-size: 11px; font-weight: 500;
-      text-transform: uppercase; letter-spacing: 2px;
-      color: var(--accent); margin-bottom: 8px;
-    }
-
-    .page-title {
-      font-family: 'DM Serif Display', serif;
-      font-size: 48px; line-height: 1;
-      letter-spacing: -1px; color: var(--ink);
-    }
-
+    .page-eyebrow { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 2px; color: var(--accent); margin-bottom: 8px; }
+    .page-title { font-family: 'DM Serif Display', serif; font-size: 48px; line-height: 1; letter-spacing: -1px; }
     .page-title em { font-style: italic; color: var(--muted); }
     .header-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 
     .btn {
       display: inline-flex; align-items: center; gap: 7px;
       padding: 10px 18px; border-radius: 7px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13px; font-weight: 500;
-      cursor: pointer; border: none;
-      transition: all 0.18s; text-decoration: none;
+      font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+      cursor: pointer; border: none; transition: all 0.18s; text-decoration: none;
     }
-
     .btn svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.8; flex-shrink: 0; }
     .btn-outline { background: white; color: var(--ink); border: 1.5px solid var(--line); }
     .btn-outline:hover { border-color: var(--ink); background: var(--ink); color: white; }
     .btn-solid { background: var(--ink); color: white; }
     .btn-solid:hover { background: #1e2730; transform: translateY(-1px); }
-
     .btn-start { background: var(--present-fg); color: white; padding: 11px 22px; font-size: 14px; }
     .btn-start:hover { background: #165c32; transform: translateY(-1px); }
     .btn-start svg { width: 16px; height: 16px; }
 
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px; margin-bottom: 28px;
-      animation: fadeUp 0.5s ease 0.08s both;
-    }
-
-    .stat-card {
-      background: white; border: 1.5px solid var(--line);
-      border-radius: 12px; padding: 22px 24px;
-      position: relative; overflow: hidden;
-    }
-
-    .stat-card::before {
-      content: ''; position: absolute;
-      top: 0; left: 0; right: 0; height: 3px;
-      border-radius: 12px 12px 0 0;
-    }
-
+    /* ── Stats ── */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; animation: fadeUp 0.5s ease 0.08s both; }
+    .stat-card { background: white; border: 1.5px solid var(--line); border-radius: 12px; padding: 22px 24px; position: relative; overflow: hidden; }
+    .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; border-radius: 12px 12px 0 0; }
     .stat-card.total::before   { background: var(--ink); }
     .stat-card.present::before { background: var(--present-fg); }
     .stat-card.absent::before  { background: var(--absent-fg); }
-
+    .stat-card.subject-stat::before { background: #7c3aed; }
     .stat-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 10px; }
     .stat-value { font-family: 'DM Serif Display', serif; font-size: 36px; line-height: 1; color: var(--ink); font-style: italic; }
     .stat-sub   { font-size: 12px; color: var(--muted); margin-top: 6px; font-weight: 300; }
 
-    /* Replace .chart-card style */
-  .chart-card {
-  background: white;
-  border: 1.5px solid var(--line);
-  border-radius: 12px;
-  padding: 20px 24px;
-  margin-bottom: 28px;
-  animation: fadeUp 0.5s ease 0.12s both;
-  display: flex;
-  justify-content: center;   /* center the chart */
-}
+    /* ── Filter bar ── */
+    .filter-bar {
+      background: white; border: 1.5px solid var(--line); border-radius: 12px;
+      padding: 16px 20px; margin-bottom: 20px;
+      display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+      animation: fadeUp 0.5s ease 0.1s both;
+    }
+    .filter-section { display: flex; align-items: center; gap: 8px; }
+    .filter-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 1.2px; color: var(--muted); white-space: nowrap; }
+    .filter-divider { width: 1px; height: 28px; background: var(--line); }
 
-.chart-card canvas {
-  max-width: 280px !important;
-  max-height: 280px !important;
-}
+    .range-tabs { display: flex; background: var(--paper); border: 1.5px solid var(--line); border-radius: 7px; overflow: hidden; }
+    .range-tab {
+      padding: 7px 14px; font-size: 12px; font-weight: 500; color: var(--muted);
+      cursor: pointer; border: none; background: transparent;
+      font-family: 'DM Sans', sans-serif; transition: all 0.18s;
+      border-right: 1px solid var(--line);
+    }
+    .range-tab:last-child { border-right: none; }
+    .range-tab:hover { color: var(--ink); background: white; }
+    .range-tab.active { background: var(--ink); color: white; }
 
+    .subject-select {
+      padding: 8px 12px; border: 1.5px solid var(--line); border-radius: 7px;
+      font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--ink);
+      background: white; outline: none; cursor: pointer; transition: border-color 0.2s;
+      min-width: 160px;
+    }
+    .subject-select:focus { border-color: var(--ink); }
+
+    /* ── Toolbar ── */
     .toolbar {
-      display: flex; align-items: center;
-      justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between;
       gap: 16px; margin-bottom: 20px;
-      animation: fadeUp 0.5s ease 0.14s both;
-      flex-wrap: wrap;
+      animation: fadeUp 0.5s ease 0.14s both; flex-wrap: wrap;
     }
-
     .search-wrap { position: relative; flex: 1; max-width: 320px; }
-
-    .search-wrap svg {
-      position: absolute; left: 14px; top: 50%;
-      transform: translateY(-50%);
-      width: 15px; height: 15px;
-      fill: none; stroke: var(--muted); stroke-width: 1.8; pointer-events: none;
-    }
-
+    .search-wrap svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 15px; height: 15px; fill: none; stroke: var(--muted); stroke-width: 1.8; pointer-events: none; }
     .search-wrap input {
-      width: 100%; padding: 10px 14px 10px 40px;
-      background: white; border: 1.5px solid var(--line);
-      border-radius: 7px; font-family: 'DM Sans', sans-serif;
-      font-size: 13px; color: var(--ink);
+      width: 100%; padding: 10px 14px 10px 40px; background: white;
+      border: 1.5px solid var(--line); border-radius: 7px;
+      font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--ink);
       outline: none; transition: border-color 0.2s;
     }
-
     .search-wrap input::placeholder { color: #bbb5a8; }
     .search-wrap input:focus { border-color: var(--ink); }
 
-    .filter-tabs {
-      display: flex; background: white;
-      border: 1.5px solid var(--line);
-      border-radius: 7px; overflow: hidden;
+    .status-tabs { display: flex; background: white; border: 1.5px solid var(--line); border-radius: 7px; overflow: hidden; }
+    .status-tab {
+      padding: 9px 18px; font-size: 12px; font-weight: 500; color: var(--muted);
+      cursor: pointer; border: none; background: transparent;
+      font-family: 'DM Sans', sans-serif; transition: all 0.18s;
+      border-right: 1px solid var(--line);
     }
+    .status-tab:last-child { border-right: none; }
+    .status-tab:hover { color: var(--ink); background: var(--paper); }
+    .status-tab.active { background: var(--ink); color: white; }
 
-    .filter-tab {
-      padding: 9px 18px; font-size: 12px; font-weight: 500;
-      color: var(--muted); cursor: pointer; border: none;
-      background: transparent; font-family: 'DM Sans', sans-serif;
-      transition: all 0.18s; border-right: 1px solid var(--line);
+    /* ── Chart ── */
+    .chart-card {
+      background: white; border: 1.5px solid var(--line); border-radius: 12px;
+      padding: 20px 24px; margin-bottom: 28px;
+      animation: fadeUp 0.5s ease 0.12s both;
+      display: flex; justify-content: center;
     }
+    .chart-card canvas { max-width: 280px !important; max-height: 280px !important; }
 
-    .filter-tab:last-child { border-right: none; }
-    .filter-tab:hover { color: var(--ink); background: var(--paper); }
-    .filter-tab.active { background: var(--ink); color: white; }
-
-    .table-card {
-      background: white; border: 1.5px solid var(--line);
-      border-radius: 12px; overflow: hidden;
-      animation: fadeUp 0.5s ease 0.2s both;
-    }
-
-    .table-head-bar {
-      display: flex; align-items: center;
-      justify-content: space-between;
-      padding: 16px 24px; border-bottom: 1.5px solid var(--line);
-    }
-
+    /* ── Table ── */
+    .table-card { background: white; border: 1.5px solid var(--line); border-radius: 12px; overflow: hidden; animation: fadeUp 0.5s ease 0.2s both; }
+    .table-head-bar { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; border-bottom: 1.5px solid var(--line); }
     .table-count { font-size: 12px; color: var(--muted); }
     .table-count strong { color: var(--ink); font-weight: 600; }
 
     table { width: 100%; border-collapse: collapse; }
-
     thead th {
-      padding: 12px 20px; text-align: left;
-      font-size: 10px; font-weight: 600;
-      text-transform: uppercase; letter-spacing: 1.5px;
-      color: var(--muted); background: #faf8f4;
-      border-bottom: 1.5px solid var(--line); white-space: nowrap;
+      padding: 12px 16px; text-align: left; font-size: 10px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted);
+      background: #faf8f4; border-bottom: 1.5px solid var(--line); white-space: nowrap;
     }
-
     thead th:first-child { padding-left: 24px; }
     thead th:last-child  { padding-right: 24px; text-align: right; }
-
     tbody tr { border-bottom: 1px solid var(--line); transition: background 0.15s; }
     tbody tr:last-child { border-bottom: none; }
     tbody tr:hover { background: #faf8f4; }
-
-    tbody td { padding: 14px 20px; font-size: 13.5px; color: var(--ink); vertical-align: middle; }
+    tbody td { padding: 12px 16px; font-size: 13.5px; color: var(--ink); vertical-align: middle; }
     tbody td:first-child { padding-left: 24px; }
     tbody td:last-child  { padding-right: 24px; text-align: right; }
 
     .student-cell { display: flex; align-items: center; gap: 12px; }
-
-    .avatar {
-      width: 34px; height: 34px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'DM Serif Display', serif;
-      font-size: 13px; font-style: italic; flex-shrink: 0; color: white;
-    }
-
+    .avatar { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'DM Serif Display', serif; font-size: 13px; font-style: italic; flex-shrink: 0; color: white; }
     .student-name { font-weight: 500; font-size: 14px; }
     .student-id   { font-size: 11px; color: var(--muted); font-weight: 300; }
 
     .badge {
-      display: inline-flex; align-items: center; gap: 5px;
-      padding: 4px 10px; border-radius: 20px;
-      font-size: 11px; font-weight: 600;
+      display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px;
+      border-radius: 20px; font-size: 11px; font-weight: 600;
       letter-spacing: 0.3px; text-transform: capitalize;
     }
-
     .badge-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
     .badge.present { background: var(--present-bg); color: var(--present-fg); }
     .badge.present .badge-dot { background: var(--present-fg); }
     .badge.absent  { background: var(--absent-bg);  color: var(--absent-fg); }
     .badge.absent  .badge-dot { background: var(--absent-fg); }
 
+    .subject-pill {
+      display: inline-block; padding: 3px 9px; border-radius: 20px;
+      font-size: 11px; font-weight: 500; background: #ede9fe; color: #5b21b6;
+    }
+
     .time-text { font-size: 13px; color: var(--ink); font-weight: 400; }
     .date-text { font-size: 12px; color: var(--muted); font-weight: 300; }
 
+    /* ── Override button ── */
+    .override-btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 500;
+      cursor: pointer; border: 1.5px solid var(--line); background: white;
+      font-family: 'DM Sans', sans-serif; color: var(--muted);
+      transition: all 0.18s; white-space: nowrap;
+    }
+    .override-btn:hover { border-color: var(--ink); color: var(--ink); background: var(--paper); }
+    .override-btn svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2; }
+    .override-btn.toggling { opacity: 0.5; pointer-events: none; }
+
+    /* ── Empty state ── */
     .empty-state { padding: 60px 24px; text-align: center; display: none; }
     .empty-state svg { width: 40px; height: 40px; fill: none; stroke: var(--line); stroke-width: 1.2; margin-bottom: 12px; }
     .empty-state p { font-size: 14px; color: var(--muted); }
 
     /* ── Modal ── */
-    .modal-overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.7);
-      display: none; align-items: center; justify-content: center;
-      z-index: 999;
-    }
-
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 999; }
     .modal-overlay.open { display: flex; }
-
-    .modal {
-      background: white; border-radius: 16px;
-      width: 440px; max-width: 95vw;
-      overflow: hidden;
-      animation: slideUp 0.3s ease;
-    }
-
-    .modal-header {
-      display: flex; align-items: center;
-      justify-content: space-between;
-      padding: 20px 24px;
-      border-bottom: 1.5px solid var(--line);
-    }
-
-    .modal-title {
-      font-family: 'DM Serif Display', serif;
-      font-size: 22px; color: var(--ink);
-    }
-
-    .modal-close {
-      width: 32px; height: 32px;
-      border-radius: 8px; border: 1.5px solid var(--line);
-      background: transparent; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      color: var(--muted); transition: all 0.15s;
-    }
-
+    .modal { background: white; border-radius: 16px; width: 440px; max-width: 95vw; overflow: hidden; animation: slideUp 0.3s ease; }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1.5px solid var(--line); }
+    .modal-title { font-family: 'DM Serif Display', serif; font-size: 22px; }
+    .modal-close { width: 32px; height: 32px; border-radius: 8px; border: 1.5px solid var(--line); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--muted); transition: all 0.15s; }
     .modal-close:hover { border-color: var(--accent); color: var(--accent); }
     .modal-close svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; }
-
     .modal-body { padding: 24px; }
-
-    .modal-footer {
-      padding: 16px 24px;
-      border-top: 1.5px solid var(--line);
-      display: flex; align-items: center;
-      justify-content: space-between; gap: 12px;
-    }
-
+    .modal-footer { padding: 16px 24px; border-top: 1.5px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
     .marked-count { font-size: 13px; color: var(--muted); }
     .marked-count strong { color: var(--ink); }
 
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(14px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes fadeUp  { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulse   { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(24px); }
-      to   { opacity: 1; transform: translateY(0); }
+    @media (max-width: 900px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
     }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50%       { opacity: 0.3; }
-    }
-
-    @media (max-width: 768px) {
-      .nav   { padding: 0 20px; }
-      .page  { padding: 28px 16px 60px; }
-      .stats-grid { grid-template-columns: repeat(1, 1fr); }
+    @media (max-width: 600px) {
+      .nav { padding: 0 20px; }
+      .page { padding: 28px 16px 60px; }
+      .stats-grid { grid-template-columns: 1fr; }
       .page-title { font-size: 36px; }
+      .filter-bar { flex-direction: column; align-items: flex-start; }
       .toolbar { flex-direction: column; align-items: stretch; }
       .search-wrap { max-width: 100%; }
     }
@@ -346,137 +249,59 @@
 </head>
 <body>
 
-  <!-- Nav -->
   <nav class="nav">
     <a class="nav-brand" href="/dashboard">
       <div class="nav-mark">
-        <svg viewBox="0 0 24 24">
-          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-        </svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
       </div>
       <span class="nav-name">Track your records.</span>
     </a>
     <div class="nav-right">
       <span class="nav-user" id="navUser"></span>
       <span class="nav-date" id="navDate"></span>
-      <a href="/students" style="
-        font-size:13px; color:rgba(255,255,255,0.6);
-        text-decoration:none; font-weight:400;
-        transition:color 0.15s;
-        "
-        onmouseover="this.style.color='white'"
-        onmouseout="this.style.color='rgba(255,255,255,0.6)'">
-        Students
-      </a>
+      <a href="/students" style="font-size:13px;color:rgba(255,255,255,0.6);text-decoration:none;font-weight:400;transition:color 0.15s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='rgba(255,255,255,0.6)'">Students</a>
       <button class="logout-btn" id="logoutBtn">
-        <svg viewBox="0 0 24 24">
-          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-          <polyline points="16 17 21 12 16 7"/>
-          <line x1="21" y1="12" x2="9" y2="12"/>
-        </svg>
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         Logout
       </button>
     </div>
   </nav>
 
-  <!-- Instruction Modal — the ONLY modal -->
+  <!-- Instruction Modal -->
   <div class="modal-overlay" id="instructionModal">
     <div class="modal">
       <div class="modal-header">
         <span class="modal-title">Start Attendance</span>
         <button class="modal-close" id="closeInstructionModal">
-          <svg viewBox="0 0 24 24">
-            <line x1="18" y1="6" x2="6" y2="18"/>
-            <line x1="6" y1="6" x2="18" y2="18"/>
-          </svg>
+          <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
-
       <div class="modal-body">
-        <!-- Status indicator -->
-        <div style="
-          background: var(--present-bg);
-          border: 1.5px solid var(--present-fg);
-          border-radius: 10px; padding: 16px 20px;
-          margin-bottom: 20px;
-          display: flex; align-items: center; gap: 12px;
-        ">
-          <span style="
-            width: 10px; height: 10px;
-            background: var(--present-fg); border-radius: 50%;
-            flex-shrink: 0; animation: pulse 1.5s infinite;
-          "></span>
+        <div style="background:var(--present-bg);border:1.5px solid var(--present-fg);border-radius:10px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:12px;">
+          <span style="width:10px;height:10px;background:var(--present-fg);border-radius:50%;flex-shrink:0;animation:pulse 1.5s infinite;"></span>
           <div>
-            <p style="font-size:13px; font-weight:500; color:var(--present-fg);">
-              Camera runs on your PC
-            </p>
-            <p style="font-size:12px; color:var(--muted); margin-top:2px;">
-              Face recognition happens locally for speed and privacy
-            </p>
+            <p style="font-size:13px;font-weight:500;color:var(--present-fg);">Camera runs on your PC</p>
+            <p style="font-size:12px;color:var(--muted);margin-top:2px;">Face recognition happens locally for speed and privacy</p>
           </div>
         </div>
-
-        <!-- Steps -->
-        <p style="font-size:11px; text-transform:uppercase; letter-spacing:1.5px; color:var(--muted); font-weight:500; margin-bottom:12px;">
-          How to take attendance
-        </p>
-
-        <div style="display:flex; flex-direction:column; gap:12px;">
-
-          <div style="display:flex; gap:12px; align-items:flex-start;">
-            <span style="
-              width:24px; height:24px; border-radius:50%;
-              background:var(--ink); color:white;
-              font-size:11px; font-weight:600;
-              display:flex; align-items:center; justify-content:center;
-              flex-shrink:0; margin-top:1px;
-            ">1</span>
-            <div>
-              <p style="font-size:13px; font-weight:500;">Open your terminal</p>
-              <p style="font-size:12px; color:var(--muted);">Navigate to your project folder</p>
-            </div>
+        <p style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);font-weight:500;margin-bottom:12px;">How to take attendance</p>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div style="display:flex;gap:12px;align-items:flex-start;">
+            <span style="width:24px;height:24px;border-radius:50%;background:var(--ink);color:white;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">1</span>
+            <div><p style="font-size:13px;font-weight:500;">Open your terminal</p><p style="font-size:12px;color:var(--muted);">Navigate to your project folder</p></div>
           </div>
-
-          <div style="display:flex; gap:12px; align-items:flex-start;">
-            <span style="
-              width:24px; height:24px; border-radius:50%;
-              background:var(--ink); color:white;
-              font-size:11px; font-weight:600;
-              display:flex; align-items:center; justify-content:center;
-              flex-shrink:0; margin-top:1px;
-            ">2</span>
-            <div>
-              <p style="font-size:13px; font-weight:500;">Run the camera script</p>
-              <code style="
-                display:block; margin-top:6px;
-                background:#f0ede8; border-radius:6px;
-                padding:8px 12px; font-size:12px;
-                color:var(--ink); font-family:monospace;
-              ">python recognize_live.py</code>
-            </div>
+          <div style="display:flex;gap:12px;align-items:flex-start;">
+            <span style="width:24px;height:24px;border-radius:50%;background:var(--ink);color:white;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">2</span>
+            <div><p style="font-size:13px;font-weight:500;">Run the camera script</p><code style="display:block;margin-top:6px;background:#f0ede8;border-radius:6px;padding:8px 12px;font-size:12px;color:var(--ink);font-family:monospace;">python recognize_live.py</code></div>
           </div>
-
-          <div style="display:flex; gap:12px; align-items:flex-start;">
-            <span style="
-              width:24px; height:24px; border-radius:50%;
-              background:var(--ink); color:white;
-              font-size:11px; font-weight:600;
-              display:flex; align-items:center; justify-content:center;
-              flex-shrink:0; margin-top:1px;
-            ">3</span>
-            <div>
-              <p style="font-size:13px; font-weight:500;">Records appear here automatically</p>
-              <p style="font-size:12px; color:var(--muted);">Dashboard refreshes every 5 seconds</p>
-            </div>
+          <div style="display:flex;gap:12px;align-items:flex-start;">
+            <span style="width:24px;height:24px;border-radius:50%;background:var(--ink);color:white;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">3</span>
+            <div><p style="font-size:13px;font-weight:500;">Records appear here automatically</p><p style="font-size:12px;color:var(--muted);">Dashboard refreshes every 5 seconds</p></div>
           </div>
-
         </div>
       </div>
-
       <div class="modal-footer">
-        <span class="marked-count" id="liveMarkedCount">
-          Checking server...
-        </span>
+        <span class="marked-count" id="liveMarkedCount">Checking server...</span>
         <button class="btn btn-solid" id="gotItBtn">Got it</button>
       </div>
     </div>
@@ -484,7 +309,6 @@
 
   <!-- Page -->
   <div class="page">
-
     <div class="page-header">
       <div>
         <p class="page-eyebrow">Dashboard</p>
@@ -492,25 +316,15 @@
       </div>
       <div class="header-actions">
         <button class="btn btn-outline" onclick="exportCSV()">
-          <svg viewBox="0 0 24 24">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-            <polyline points="7 10 12 15 17 10"/>
-            <line x1="12" y1="15" x2="12" y2="3"/>
-          </svg>
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Export
         </button>
         <button class="btn btn-outline" onclick="loadData()">
-          <svg viewBox="0 0 24 24">
-            <polyline points="23 4 23 10 17 10"/>
-            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
-          </svg>
+          <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
           Refresh
         </button>
         <button class="btn btn-start" id="startAttendanceBtn">
-          <svg viewBox="0 0 24 24">
-            <path d="M23 7l-7 5 7 5V7z"/>
-            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
-          </svg>
+          <svg viewBox="0 0 24 24"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
           Start Attendance
         </button>
       </div>
@@ -521,10 +335,10 @@
       <div class="stat-card total">
         <div class="stat-label">Total Records</div>
         <div class="stat-value" id="countTotal">—</div>
-        <div class="stat-sub">All time entries</div>
+        <div class="stat-sub" id="statRangeLabel">All time entries</div>
       </div>
       <div class="stat-card present">
-        <div class="stat-label">Present Today</div>
+        <div class="stat-label">Present</div>
         <div class="stat-value" id="countPresent">—</div>
         <div class="stat-sub">Marked by camera</div>
       </div>
@@ -533,131 +347,135 @@
         <div class="stat-value" id="countAbsent">—</div>
         <div class="stat-sub">Not checked in</div>
       </div>
+      <div class="stat-card subject-stat">
+        <div class="stat-label">Active Subject</div>
+        <div class="stat-value" id="countSubject" style="font-size:22px;font-style:normal;margin-top:4px;">All</div>
+        <div class="stat-sub" id="subjectAttRate">—</div>
+      </div>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="filter-bar">
+      <div class="filter-section">
+        <span class="filter-label">Period</span>
+        <div class="range-tabs">
+          <button class="range-tab active" data-range="day">Today</button>
+          <button class="range-tab" data-range="week">Week</button>
+          <button class="range-tab" data-range="month">Month</button>
+          <button class="range-tab" data-range="all">All</button>
+        </div>
+      </div>
+      <div class="filter-divider"></div>
+      <div class="filter-section">
+        <span class="filter-label">Subject</span>
+        <select class="subject-select" id="subjectFilter">
+          <option value="all">All Subjects</option>
+        </select>
+      </div>
     </div>
 
     <!-- Chart -->
-    <div class="chart-card" style="max-width: 320px; margin: 0 auto 28px;">
+    <div class="chart-card" style="max-width:320px;margin:0 auto 28px;">
       <canvas id="attendanceChart"></canvas>
     </div>
 
     <!-- Toolbar -->
     <div class="toolbar">
       <div class="search-wrap">
-        <svg viewBox="0 0 24 24">
-          <circle cx="11" cy="11" r="8"/>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-        </svg>
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="text" id="searchInput" placeholder="Search student name…">
       </div>
-      <div class="filter-tabs">
-        <button class="filter-tab active" data-filter="all">All</button>
-        <button class="filter-tab" data-filter="present">Present</button>
-        <button class="filter-tab" data-filter="absent">Absent</button>
+      <div class="status-tabs">
+        <button class="status-tab active" data-filter="all">All</button>
+        <button class="status-tab" data-filter="present">Present</button>
+        <button class="status-tab" data-filter="absent">Absent</button>
       </div>
     </div>
 
     <!-- Table -->
     <div class="table-card">
       <div class="table-head-bar">
-        <span class="table-count">
-          Showing <strong id="visibleCount">0</strong>
-          of <strong id="totalCount">0</strong> records
-        </span>
+        <span class="table-count">Showing <strong id="visibleCount">0</strong> of <strong id="totalCount">0</strong> records</span>
+        <span style="font-size:11px;color:var(--muted);">Click toggle to override attendance status</span>
       </div>
       <table>
         <thead>
           <tr>
             <th>Student</th>
+            <th>Subject</th>
             <th>Date</th>
             <th>Time In</th>
             <th>Status</th>
-            <th></th>
+            <th>Override</th>
           </tr>
         </thead>
         <tbody id="tableBody"></tbody>
       </table>
       <div class="empty-state" id="emptyState">
-        <svg viewBox="0 0 24 24">
-          <circle cx="12" cy="12" r="10"/>
-          <line x1="12" y1="8" x2="12" y2="12"/>
-          <line x1="12" y1="16" x2="12.01" y2="16"/>
-        </svg>
-        <p>No records match your search.</p>
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <p>No records match your filters.</p>
       </div>
     </div>
-
   </div>
 
   <script>
     const COLORS = ['#2d6a8a','#a0522d','#2e7d5e','#7b4ea6','#c0722a','#3d6b99'];
-    let students      = [];
+    let allRecords    = [];
     let currentFilter = 'all';
+    let currentRange  = 'day';
+    let currentSubject = 'all';
     let chartInstance = null;
+    let subjects      = [];
 
     // ── Auth ──────────────────────────────────────────────────────
     function getToken() { return localStorage.getItem("token"); }
-
-    function authHeaders() {
-      return {
-        "Content-Type":  "application/json",
-        "Authorization": "Bearer " + getToken()
-      };
-    }
-
-    function logout() {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      window.location.href = "/";
-    }
-
+    function authHeaders() { return { "Content-Type": "application/json", "Authorization": "Bearer " + getToken() }; }
+    function logout() { localStorage.removeItem("token"); localStorage.removeItem("user"); window.location.href = "/"; }
     if (!getToken()) window.location.href = "/";
 
-    document.getElementById("navUser").textContent =
-      localStorage.getItem("user") || "";
-
-    document.getElementById("navDate").textContent =
-      new Date().toLocaleDateString("en-IN", {
-        weekday: "long", day: "numeric",
-        month: "long", year: "numeric"
-      });
-
+    document.getElementById("navUser").textContent = localStorage.getItem("user") || "";
+    document.getElementById("navDate").textContent = new Date().toLocaleDateString("en-IN", { weekday:"long", day:"numeric", month:"long", year:"numeric" });
     document.getElementById("logoutBtn").addEventListener("click", logout);
 
     // ── Modal ─────────────────────────────────────────────────────
     function openModal()  { document.getElementById("instructionModal").classList.add("open"); updateModalCount(); }
     function closeModal() { document.getElementById("instructionModal").classList.remove("open"); }
-
     document.getElementById("startAttendanceBtn").addEventListener("click", openModal);
     document.getElementById("closeInstructionModal").addEventListener("click", closeModal);
     document.getElementById("gotItBtn").addEventListener("click", closeModal);
+    document.getElementById("instructionModal").addEventListener("click", function(e) { if (e.target === this) closeModal(); });
 
-    // Close modal on overlay click
-    document.getElementById("instructionModal").addEventListener("click", function(e) {
-      if (e.target === this) closeModal();
-    });
-
-    // Live count inside modal
     async function updateModalCount() {
       try {
         const res  = await fetch("/api/status", { headers: authHeaders() });
         if (!res.ok) return;
         const data = await res.json();
-        document.getElementById("liveMarkedCount").innerHTML =
-          `<strong>${data.marked_today}</strong> marked today`;
+        document.getElementById("liveMarkedCount").innerHTML = `<strong>${data.marked_today}</strong> marked today`;
       } catch(e) {}
     }
 
-    // Refresh count every 3 seconds while modal is open
     setInterval(() => {
-      if (document.getElementById("instructionModal").classList.contains("open")) {
-        updateModalCount();
-      }
+      if (document.getElementById("instructionModal").classList.contains("open")) updateModalCount();
     }, 3000);
 
-    // ── Table ─────────────────────────────────────────────────────
-    function initials(name) {
-      return name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
+    // ── Load subjects into dropdown ───────────────────────────────
+    async function loadSubjects() {
+      try {
+        const res  = await fetch("/api/subjects", { headers: authHeaders() });
+        if (!res.ok) return;
+        subjects   = await res.json();
+        const sel  = document.getElementById("subjectFilter");
+        subjects.forEach(s => {
+          const opt   = document.createElement("option");
+          opt.value   = s;
+          opt.textContent = s;
+          sel.appendChild(opt);
+        });
+      } catch(e) {}
     }
+
+    // ── Render ────────────────────────────────────────────────────
+    function initials(name) { return name.split(" ").map(w => w[0]).join("").slice(0,2).toUpperCase(); }
 
     function renderRows(list) {
       const tbody = document.getElementById("tableBody");
@@ -669,144 +487,187 @@
         empty.style.display = "block";
         return;
       }
-
       empty.style.display = "none";
       tbody.innerHTML = list.map((s, i) => `
-        <tr>
+        <tr id="row-${s.id}">
           <td>
             <div class="student-cell">
-              <div class="avatar" style="background:${COLORS[i % COLORS.length]}">
-                ${initials(s.name)}
-              </div>
+              <div class="avatar" style="background:${COLORS[i % COLORS.length]}">${initials(s.name)}</div>
               <div>
                 <div class="student-name">${s.name}</div>
-                <div class="student-id">${s.id}</div>
+                <div class="student-id">${s.roll_no || ('STU-' + (i+1))}</div>
               </div>
             </div>
           </td>
+          <td><span class="subject-pill">${s.subject || 'General'}</span></td>
           <td><span class="date-text">${s.date}</span></td>
           <td><span class="time-text">${s.time}</span></td>
           <td>
-            <span class="badge ${s.status}">
+            <span class="badge ${s.status}" id="badge-${s.id}">
               <span class="badge-dot"></span>${s.status}
             </span>
           </td>
-          <td></td>
+          <td>
+            <button class="override-btn" id="ovr-${s.id}" onclick="toggleRecord(${s.id})">
+              <svg viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+              Toggle
+            </button>
+          </td>
         </tr>
       `).join("");
     }
 
     function updateStats() {
-      const present = students.filter(s => s.status === "present").length;
-      const absent  = students.filter(s => s.status === "absent").length;
-      document.getElementById("countTotal").textContent   = students.length;
+      const present = allRecords.filter(s => s.status === "present").length;
+      const absent  = allRecords.filter(s => s.status === "absent").length;
+      document.getElementById("countTotal").textContent   = allRecords.length;
       document.getElementById("countPresent").textContent = present;
       document.getElementById("countAbsent").textContent  = absent;
-      document.getElementById("totalCount").textContent   = students.length;
+      document.getElementById("totalCount").textContent   = allRecords.length;
+
+      // Subject stat
+      const subjectLabel = currentSubject === "all" ? "All Subjects" : currentSubject;
+      document.getElementById("countSubject").textContent = currentSubject === "all" ? "All" : currentSubject.split(" ")[0];
+      const attRate = allRecords.length > 0 ? Math.round(present / allRecords.length * 100) : 0;
+      document.getElementById("subjectAttRate").textContent = allRecords.length > 0 ? `${attRate}% attendance rate` : "No records";
+
+      // Range label
+      const rangeLabels = { day: "Today's entries", week: "Last 7 days", month: "Last 30 days", all: "All time entries" };
+      document.getElementById("statRangeLabel").textContent = rangeLabels[currentRange] || "All time entries";
     }
 
     function applyFilters() {
       const q = document.getElementById("searchInput").value.toLowerCase();
-      const filtered = students.filter(s => {
-        const matchFilter = currentFilter === "all" || s.status === currentFilter;
-        const matchSearch = s.name.toLowerCase().includes(q);
+      const filtered = allRecords.filter(s => {
+        const matchFilter  = currentFilter === "all" || s.status === currentFilter;
+        const matchSearch  = s.name.toLowerCase().includes(q);
         return matchFilter && matchSearch;
       });
       renderRows(filtered);
     }
 
     function updateChart() {
-      const present = students.filter(s => s.status === "present").length;
-      const absent  = students.filter(s => s.status === "absent").length;
-
+      const present = allRecords.filter(s => s.status === "present").length;
+      const absent  = allRecords.filter(s => s.status === "absent").length;
       if (chartInstance) {
         chartInstance.data.datasets[0].data = [present, absent];
         chartInstance.update();
         return;
       }
-
       chartInstance = new Chart(
-        document.getElementById("attendanceChart").getContext("2d"),
-       {
+        document.getElementById("attendanceChart").getContext("2d"), {
           type: "doughnut",
           data: {
             labels: ["Present", "Absent"],
-            datasets: [{
-              data: [present, absent],
-              backgroundColor: ["#1e7a43", "#c84b31"],
-              borderWidth: 0
-            }]
+            datasets: [{ data: [present, absent], backgroundColor: ["#1e7a43", "#c84b31"], borderWidth: 0 }]
           },
-        options: {
-          responsive: true,
-          maintainAspectRatio: true,
-          plugins: {
-            legend: { position: "bottom" },
-            tooltip: {
-              callbacks: {
-                label: ctx => ` ${ctx.label}: ${ctx.parsed}`
-            }
+          options: {
+            responsive: true, maintainAspectRatio: true,
+            plugins: {
+              legend: { position: "bottom" },
+              tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed}` } }
+            },
+            cutout: "65%"
           }
-        },
-        cutout: "65%"
-      }
+        }
+      );
     }
-  );
-}
+
+    // ── Load data ─────────────────────────────────────────────────
     async function loadData() {
       try {
-        const res = await fetch("/api/full_records", { headers: authHeaders() });
+        const params = new URLSearchParams({ range: currentRange, subject: currentSubject });
+        const res    = await fetch(`/api/full_records?${params}`, { headers: authHeaders() });
         if (res.status === 401) { logout(); return; }
         if (!res.ok) throw new Error("Server error");
 
-        const data = await res.json();
-        students = data.map((d, i) => ({
-          name:   d.name,
-          id:     d.id || ("STU-" + (i + 1)),
-          date:   d.date,
-          time:   d.time,
-          status: (d.status || "present").toLowerCase()
-        }));
-
+        allRecords = await res.json();
         updateStats();
         applyFilters();
         updateChart();
-      } catch (err) {
+      } catch(err) {
         console.error("Error loading data:", err);
       }
     }
 
-    async function exportCSV() {
+    // ── Manual override toggle ────────────────────────────────────
+    async function toggleRecord(recordId) {
+      const btn = document.getElementById(`ovr-${recordId}`);
+      if (!btn) return;
+      btn.classList.add("toggling");
+
       try {
-        const res  = await fetch("/api/full_records", { headers: authHeaders() });
+        const res  = await fetch(`/api/records/${recordId}/toggle`, { method: "POST", headers: authHeaders() });
         if (res.status === 401) { logout(); return; }
         const data = await res.json();
-        let csv = "Name,Date,Time,Status\n";
-        data.forEach(r => { csv += `${r.name},${r.date},${r.time},${r.status}\n`; });
+        if (res.ok) {
+          // Update in allRecords
+          const rec = allRecords.find(r => r.id === recordId);
+          if (rec) rec.status = data.status;
+
+          // Update badge in place (no full reload)
+          const badge = document.getElementById(`badge-${recordId}`);
+          if (badge) {
+            badge.className = `badge ${data.status}`;
+            badge.innerHTML = `<span class="badge-dot"></span>${data.status}`;
+          }
+          updateStats();
+          updateChart();
+        }
+      } catch(err) {
+        console.error("Toggle failed:", err);
+      }
+      btn.classList.remove("toggling");
+    }
+
+    // ── Export CSV ────────────────────────────────────────────────
+    async function exportCSV() {
+      try {
+        const params = new URLSearchParams({ range: currentRange, subject: currentSubject });
+        const res    = await fetch(`/api/full_records?${params}`, { headers: authHeaders() });
+        if (res.status === 401) { logout(); return; }
+        const data   = await res.json();
+        let csv = "Name,Roll No,Subject,Date,Time,Status\n";
+        data.forEach(r => { csv += `${r.name},${r.roll_no},${r.subject},${r.date},${r.time},${r.status}\n`; });
         const blob = new Blob([csv], { type: "text/csv" });
         const url  = URL.createObjectURL(blob);
         const a    = document.createElement("a");
-        a.href = url;
-        a.download = `attendance_${new Date().toISOString().slice(0,10)}.csv`;
+        a.href     = url;
+        a.download = `attendance_${currentRange}_${new Date().toISOString().slice(0,10)}.csv`;
         a.click();
         URL.revokeObjectURL(url);
-      } catch (err) { console.error("Export failed:", err); }
+      } catch(err) { console.error("Export failed:", err); }
     }
 
-    // ── Filters & Search ──────────────────────────────────────────
-    document.querySelectorAll(".filter-tab").forEach(btn => {
+    // ── Filter & search events ─────────────────────────────────────
+    document.querySelectorAll(".range-tab").forEach(btn => {
       btn.addEventListener("click", () => {
-        document.querySelectorAll(".filter-tab")
-          .forEach(b => b.classList.remove("active"));
+        document.querySelectorAll(".range-tab").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentRange = btn.dataset.range;
+        loadData();
+      });
+    });
+
+    document.querySelectorAll(".status-tab").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".status-tab").forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
         currentFilter = btn.dataset.filter;
         applyFilters();
       });
     });
 
+    document.getElementById("subjectFilter").addEventListener("change", function() {
+      currentSubject = this.value;
+      document.getElementById("countSubject").textContent = this.value === "all" ? "All" : this.value.split(" ")[0];
+      loadData();
+    });
+
     document.getElementById("searchInput").addEventListener("input", applyFilters);
 
     // ── Init ──────────────────────────────────────────────────────
+    loadSubjects();
     loadData();
     setInterval(loadData, 5000);
   </script>
