@@ -512,6 +512,10 @@
       }
     }
 
+    const data = await res.json();
+    if (!Array.isArray(data)) { console.error("Unexpected data:", data); return; }
+    renderStudents(data);
+
     // ── Add student modal ─────────────────────────────────────────
     let photoBase64 = null;
 
