@@ -15,10 +15,8 @@
       --line: #d4cdc0;
       --present-bg: #edf7f0;
       --present-fg: #1e7a43;
-      --absent-bg: #fdf0ee;
-      --absent-fg: #c84b31;
-      --late-bg: #fdf6e3;
-      --late-fg: #9a6e00;
+      --absent-bg:  #fdf0ee;
+      --absent-fg:  #c84b31;
     }
 
     body {
@@ -30,21 +28,15 @@
 
     .nav {
       background: var(--ink);
-      display: flex;
-      align-items: center;
+      display: flex; align-items: center;
       justify-content: space-between;
-      padding: 0 48px;
-      height: 64px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      padding: 0 48px; height: 64px;
+      position: sticky; top: 0; z-index: 100;
     }
 
     .nav-brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      text-decoration: none;
+      display: flex; align-items: center;
+      gap: 12px; text-decoration: none;
     }
 
     .nav-mark {
@@ -54,89 +46,30 @@
       display: flex; align-items: center; justify-content: center;
     }
 
-    .nav-mark svg {
-      width: 18px; height: 18px;
-      fill: none; stroke: white; stroke-width: 1.5;
-    }
+    .nav-mark svg { width: 18px; height: 18px; fill: none; stroke: white; stroke-width: 1.5; }
+    .nav-name { font-family: 'DM Serif Display', serif; font-size: 20px; color: white; }
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+    .nav-date { font-size: 12px; color: rgba(255,255,255,0.35); font-weight: 300; }
+    .nav-user { font-size: 13px; color: rgba(255,255,255,0.7); }
 
-    .nav-name {
-      font-family: 'DM Serif Display', serif;
-      font-size: 20px; color: white; letter-spacing: -0.3px;
-    }
-
-    .nav-right {
-      display: flex; align-items: center; gap: 24px;
-    }
-
-    .nav-date {
-      font-size: 12px;
-      color: rgba(255,255,255,0.35);
-      font-weight: 300; letter-spacing: 0.5px;
-    }
-
-    .nav-user {
-      font-size: 13px;
-      color: rgba(255,255,255,0.7);
-      font-weight: 400;
-    }
-
-    /* live badge */
-    .live-badge {
-      display: flex; align-items: center; gap: 6px;
-      background: rgba(30,122,67,0.2);
-      border: 1px solid rgba(30,122,67,0.4);
-      border-radius: 20px;
-      padding: 4px 12px;
-    }
-
-    .live-dot {
-      width: 7px; height: 7px;
-      background: #1e7a43; border-radius: 50%;
-      animation: pulse 1.5s infinite;
-    }
-
-    .live-text {
-      font-size: 11px; color: #1e7a43; font-weight: 500;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50%       { opacity: 0.3; }
-    }
-
-    /* logout button */
     .logout-btn {
       display: flex; align-items: center; gap: 6px;
       background: rgba(255,255,255,0.08);
       border: 1.5px solid rgba(255,255,255,0.15);
-      border-radius: 7px;
-      padding: 7px 14px;
+      border-radius: 7px; padding: 7px 14px;
       color: rgba(255,255,255,0.7);
       font-family: 'DM Sans', sans-serif;
       font-size: 12px; font-weight: 500;
-      cursor: pointer;
-      transition: all 0.18s;
+      cursor: pointer; transition: all 0.18s;
     }
 
-    .logout-btn:hover {
-      background: rgba(255,255,255,0.15);
-      color: white;
-    }
+    .logout-btn:hover { background: rgba(255,255,255,0.15); color: white; }
+    .logout-btn svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.5; }
 
-    .logout-btn svg {
-      width: 14px; height: 14px;
-      fill: none; stroke: currentColor; stroke-width: 1.5;
-    }
-
-    .page {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 48px 32px 80px;
-    }
+    .page { max-width: 1100px; margin: 0 auto; padding: 48px 32px 80px; }
 
     .page-header {
-      display: flex;
-      align-items: flex-end;
+      display: flex; align-items: flex-end;
       justify-content: space-between;
       margin-bottom: 40px;
       animation: fadeUp 0.5s ease both;
@@ -156,10 +89,7 @@
     }
 
     .page-title em { font-style: italic; color: var(--muted); }
-
-    .header-actions {
-      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-    }
+    .header-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 
     .btn {
       display: inline-flex; align-items: center; gap: 7px;
@@ -170,74 +100,46 @@
       transition: all 0.18s; text-decoration: none;
     }
 
-    .btn svg {
-      width: 14px; height: 14px;
-      fill: none; stroke: currentColor;
-      stroke-width: 1.8; flex-shrink: 0;
-    }
-
-    .btn-outline {
-      background: white; color: var(--ink);
-      border: 1.5px solid var(--line);
-    }
-
-    .btn-outline:hover {
-      border-color: var(--ink);
-      background: var(--ink); color: white;
-    }
-
+    .btn svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.8; flex-shrink: 0; }
+    .btn-outline { background: white; color: var(--ink); border: 1.5px solid var(--line); }
+    .btn-outline:hover { border-color: var(--ink); background: var(--ink); color: white; }
     .btn-solid { background: var(--ink); color: white; }
-
     .btn-solid:hover { background: #1e2730; transform: translateY(-1px); }
+
+    .btn-start { background: var(--present-fg); color: white; padding: 11px 22px; font-size: 14px; }
+    .btn-start:hover { background: #165c32; transform: translateY(-1px); }
+    .btn-start svg { width: 16px; height: 16px; }
 
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 16px; margin-bottom: 28px;
       animation: fadeUp 0.5s ease 0.08s both;
     }
 
     .stat-card {
-      background: white;
-      border: 1.5px solid var(--line);
-      border-radius: 12px;
-      padding: 22px 24px;
+      background: white; border: 1.5px solid var(--line);
+      border-radius: 12px; padding: 22px 24px;
       position: relative; overflow: hidden;
     }
 
     .stat-card::before {
-      content: '';
-      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      content: ''; position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
       border-radius: 12px 12px 0 0;
     }
 
     .stat-card.total::before   { background: var(--ink); }
     .stat-card.present::before { background: var(--present-fg); }
     .stat-card.absent::before  { background: var(--absent-fg); }
-    .stat-card.late::before    { background: var(--late-fg); }
 
-    .stat-label {
-      font-size: 11px; font-weight: 500;
-      text-transform: uppercase; letter-spacing: 1.5px;
-      color: var(--muted); margin-bottom: 10px;
-    }
-
-    .stat-value {
-      font-family: 'DM Serif Display', serif;
-      font-size: 36px; line-height: 1;
-      color: var(--ink); font-style: italic;
-    }
-
-    .stat-sub {
-      font-size: 12px; color: var(--muted);
-      margin-top: 6px; font-weight: 300;
-    }
+    .stat-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 10px; }
+    .stat-value { font-family: 'DM Serif Display', serif; font-size: 36px; line-height: 1; color: var(--ink); font-style: italic; }
+    .stat-sub   { font-size: 12px; color: var(--muted); margin-top: 6px; font-weight: 300; }
 
     .chart-card {
-      background: white;
-      border: 1.5px solid var(--line);
-      border-radius: 12px;
-      padding: 20px 24px;
+      background: white; border: 1.5px solid var(--line);
+      border-radius: 12px; padding: 20px 24px;
       margin-bottom: 28px;
       animation: fadeUp 0.5s ease 0.12s both;
     }
@@ -250,25 +152,19 @@
       flex-wrap: wrap;
     }
 
-    .search-wrap {
-      position: relative; flex: 1; max-width: 320px;
-    }
+    .search-wrap { position: relative; flex: 1; max-width: 320px; }
 
     .search-wrap svg {
       position: absolute; left: 14px; top: 50%;
       transform: translateY(-50%);
       width: 15px; height: 15px;
-      fill: none; stroke: var(--muted); stroke-width: 1.8;
-      pointer-events: none;
+      fill: none; stroke: var(--muted); stroke-width: 1.8; pointer-events: none;
     }
 
     .search-wrap input {
-      width: 100%;
-      padding: 10px 14px 10px 40px;
-      background: white;
-      border: 1.5px solid var(--line);
-      border-radius: 7px;
-      font-family: 'DM Sans', sans-serif;
+      width: 100%; padding: 10px 14px 10px 40px;
+      background: white; border: 1.5px solid var(--line);
+      border-radius: 7px; font-family: 'DM Sans', sans-serif;
       font-size: 13px; color: var(--ink);
       outline: none; transition: border-color 0.2s;
     }
@@ -285,10 +181,8 @@
     .filter-tab {
       padding: 9px 18px; font-size: 12px; font-weight: 500;
       color: var(--muted); cursor: pointer; border: none;
-      background: transparent;
-      font-family: 'DM Sans', sans-serif;
-      transition: all 0.18s;
-      border-right: 1px solid var(--line);
+      background: transparent; font-family: 'DM Sans', sans-serif;
+      transition: all 0.18s; border-right: 1px solid var(--line);
     }
 
     .filter-tab:last-child { border-right: none; }
@@ -296,8 +190,7 @@
     .filter-tab.active { background: var(--ink); color: white; }
 
     .table-card {
-      background: white;
-      border: 1.5px solid var(--line);
+      background: white; border: 1.5px solid var(--line);
       border-radius: 12px; overflow: hidden;
       animation: fadeUp 0.5s ease 0.2s both;
     }
@@ -305,8 +198,7 @@
     .table-head-bar {
       display: flex; align-items: center;
       justify-content: space-between;
-      padding: 16px 24px;
-      border-bottom: 1.5px solid var(--line);
+      padding: 16px 24px; border-bottom: 1.5px solid var(--line);
     }
 
     .table-count { font-size: 12px; color: var(--muted); }
@@ -319,27 +211,17 @@
       font-size: 10px; font-weight: 600;
       text-transform: uppercase; letter-spacing: 1.5px;
       color: var(--muted); background: #faf8f4;
-      border-bottom: 1.5px solid var(--line);
-      white-space: nowrap;
+      border-bottom: 1.5px solid var(--line); white-space: nowrap;
     }
 
     thead th:first-child { padding-left: 24px; }
     thead th:last-child  { padding-right: 24px; text-align: right; }
 
-    tbody tr {
-      border-bottom: 1px solid var(--line);
-      transition: background 0.15s;
-    }
-
+    tbody tr { border-bottom: 1px solid var(--line); transition: background 0.15s; }
     tbody tr:last-child { border-bottom: none; }
     tbody tr:hover { background: #faf8f4; }
 
-    tbody td {
-      padding: 14px 20px;
-      font-size: 13.5px; color: var(--ink);
-      vertical-align: middle;
-    }
-
+    tbody td { padding: 14px 20px; font-size: 13.5px; color: var(--ink); vertical-align: middle; }
     tbody td:first-child { padding-left: 24px; }
     tbody td:last-child  { padding-right: 24px; text-align: right; }
 
@@ -349,8 +231,7 @@
       width: 34px; height: 34px; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
       font-family: 'DM Serif Display', serif;
-      font-size: 13px; font-style: italic;
-      flex-shrink: 0; color: white;
+      font-size: 13px; font-style: italic; flex-shrink: 0; color: white;
     }
 
     .student-name { font-weight: 500; font-size: 14px; }
@@ -363,51 +244,99 @@
       letter-spacing: 0.3px; text-transform: capitalize;
     }
 
-    .badge-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%; flex-shrink: 0;
-    }
-
+    .badge-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
     .badge.present { background: var(--present-bg); color: var(--present-fg); }
     .badge.present .badge-dot { background: var(--present-fg); }
     .badge.absent  { background: var(--absent-bg);  color: var(--absent-fg); }
     .badge.absent  .badge-dot { background: var(--absent-fg); }
-    .badge.late    { background: var(--late-bg);    color: var(--late-fg); }
-    .badge.late    .badge-dot { background: var(--late-fg); }
 
     .time-text { font-size: 13px; color: var(--ink); font-weight: 400; }
     .date-text { font-size: 12px; color: var(--muted); font-weight: 300; }
 
-    .empty-state {
-      padding: 60px 24px; text-align: center; display: none;
-    }
-
-    .empty-state svg {
-      width: 40px; height: 40px;
-      fill: none; stroke: var(--line); stroke-width: 1.2;
-      margin-bottom: 12px;
-    }
-
+    .empty-state { padding: 60px 24px; text-align: center; display: none; }
+    .empty-state svg { width: 40px; height: 40px; fill: none; stroke: var(--line); stroke-width: 1.2; margin-bottom: 12px; }
     .empty-state p { font-size: 14px; color: var(--muted); }
+
+    /* ── Modal ── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: none; align-items: center; justify-content: center;
+      z-index: 999;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: white; border-radius: 16px;
+      width: 440px; max-width: 95vw;
+      overflow: hidden;
+      animation: slideUp 0.3s ease;
+    }
+
+    .modal-header {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      border-bottom: 1.5px solid var(--line);
+    }
+
+    .modal-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px; color: var(--ink);
+    }
+
+    .modal-close {
+      width: 32px; height: 32px;
+      border-radius: 8px; border: 1.5px solid var(--line);
+      background: transparent; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted); transition: all 0.15s;
+    }
+
+    .modal-close:hover { border-color: var(--accent); color: var(--accent); }
+    .modal-close svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+    .modal-body { padding: 24px; }
+
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1.5px solid var(--line);
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 12px;
+    }
+
+    .marked-count { font-size: 13px; color: var(--muted); }
+    .marked-count strong { color: var(--ink); }
 
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(14px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.3; }
+    }
+
     @media (max-width: 768px) {
       .nav   { padding: 0 20px; }
       .page  { padding: 28px 16px 60px; }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .stats-grid { grid-template-columns: repeat(1, 1fr); }
       .page-title { font-size: 36px; }
       .toolbar { flex-direction: column; align-items: stretch; }
       .search-wrap { max-width: 100%; }
-      .live-badge { display: none; }
     }
   </style>
 </head>
 <body>
 
+  <!-- Nav -->
   <nav class="nav">
     <a class="nav-brand" href="/dashboard">
       <div class="nav-mark">
@@ -418,14 +347,8 @@
       <span class="nav-name">AttendanceOS</span>
     </a>
     <div class="nav-right">
-      <!-- Live camera indicator -->
-      <div class="live-badge">
-        <span class="live-dot"></span>
-        <span class="live-text">Camera Live</span>
-      </div>
       <span class="nav-user" id="navUser"></span>
       <span class="nav-date" id="navDate"></span>
-      <!-- FIX: proper logout button, not broken <a> tag -->
       <button class="logout-btn" id="logoutBtn">
         <svg viewBox="0 0 24 24">
           <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
@@ -437,6 +360,110 @@
     </div>
   </nav>
 
+  <!-- Instruction Modal — the ONLY modal -->
+  <div class="modal-overlay" id="instructionModal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">Start Attendance</span>
+        <button class="modal-close" id="closeInstructionModal">
+          <svg viewBox="0 0 24 24">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Status indicator -->
+        <div style="
+          background: var(--present-bg);
+          border: 1.5px solid var(--present-fg);
+          border-radius: 10px; padding: 16px 20px;
+          margin-bottom: 20px;
+          display: flex; align-items: center; gap: 12px;
+        ">
+          <span style="
+            width: 10px; height: 10px;
+            background: var(--present-fg); border-radius: 50%;
+            flex-shrink: 0; animation: pulse 1.5s infinite;
+          "></span>
+          <div>
+            <p style="font-size:13px; font-weight:500; color:var(--present-fg);">
+              Camera runs on your PC
+            </p>
+            <p style="font-size:12px; color:var(--muted); margin-top:2px;">
+              Face recognition happens locally for speed and privacy
+            </p>
+          </div>
+        </div>
+
+        <!-- Steps -->
+        <p style="font-size:11px; text-transform:uppercase; letter-spacing:1.5px; color:var(--muted); font-weight:500; margin-bottom:12px;">
+          How to take attendance
+        </p>
+
+        <div style="display:flex; flex-direction:column; gap:12px;">
+
+          <div style="display:flex; gap:12px; align-items:flex-start;">
+            <span style="
+              width:24px; height:24px; border-radius:50%;
+              background:var(--ink); color:white;
+              font-size:11px; font-weight:600;
+              display:flex; align-items:center; justify-content:center;
+              flex-shrink:0; margin-top:1px;
+            ">1</span>
+            <div>
+              <p style="font-size:13px; font-weight:500;">Open your terminal</p>
+              <p style="font-size:12px; color:var(--muted);">Navigate to your project folder</p>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:12px; align-items:flex-start;">
+            <span style="
+              width:24px; height:24px; border-radius:50%;
+              background:var(--ink); color:white;
+              font-size:11px; font-weight:600;
+              display:flex; align-items:center; justify-content:center;
+              flex-shrink:0; margin-top:1px;
+            ">2</span>
+            <div>
+              <p style="font-size:13px; font-weight:500;">Run the camera script</p>
+              <code style="
+                display:block; margin-top:6px;
+                background:#f0ede8; border-radius:6px;
+                padding:8px 12px; font-size:12px;
+                color:var(--ink); font-family:monospace;
+              ">python recognize_live.py</code>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:12px; align-items:flex-start;">
+            <span style="
+              width:24px; height:24px; border-radius:50%;
+              background:var(--ink); color:white;
+              font-size:11px; font-weight:600;
+              display:flex; align-items:center; justify-content:center;
+              flex-shrink:0; margin-top:1px;
+            ">3</span>
+            <div>
+              <p style="font-size:13px; font-weight:500;">Records appear here automatically</p>
+              <p style="font-size:12px; color:var(--muted);">Dashboard refreshes every 5 seconds</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <span class="marked-count" id="liveMarkedCount">
+          Checking server...
+        </span>
+        <button class="btn btn-solid" id="gotItBtn">Got it</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page -->
   <div class="page">
 
     <div class="page-header">
@@ -453,12 +480,19 @@
           </svg>
           Export
         </button>
-        <button class="btn btn-solid" onclick="loadData()">
+        <button class="btn btn-outline" onclick="loadData()">
           <svg viewBox="0 0 24 24">
             <polyline points="23 4 23 10 17 10"/>
             <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
           </svg>
           Refresh
+        </button>
+        <button class="btn btn-start" id="startAttendanceBtn">
+          <svg viewBox="0 0 24 24">
+            <path d="M23 7l-7 5 7 5V7z"/>
+            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+          </svg>
+          Start Attendance
         </button>
       </div>
     </div>
@@ -473,23 +507,18 @@
       <div class="stat-card present">
         <div class="stat-label">Present Today</div>
         <div class="stat-value" id="countPresent">—</div>
-        <div class="stat-sub">On time</div>
+        <div class="stat-sub">Marked by camera</div>
       </div>
       <div class="stat-card absent">
         <div class="stat-label">Absent</div>
         <div class="stat-value" id="countAbsent">—</div>
         <div class="stat-sub">Not checked in</div>
       </div>
-      <div class="stat-card late">
-        <div class="stat-label">Late</div>
-        <div class="stat-value" id="countLate">—</div>
-        <div class="stat-sub">After 9:10 AM</div>
-      </div>
     </div>
 
     <!-- Chart -->
     <div class="chart-card">
-      <canvas id="attendanceChart" height="110"></canvas>
+      <canvas id="attendanceChart" height="100"></canvas>
     </div>
 
     <!-- Toolbar -->
@@ -504,7 +533,6 @@
       <div class="filter-tabs">
         <button class="filter-tab active" data-filter="all">All</button>
         <button class="filter-tab" data-filter="present">Present</button>
-        <button class="filter-tab" data-filter="late">Late</button>
         <button class="filter-tab" data-filter="absent">Absent</button>
       </div>
     </div>
@@ -542,19 +570,14 @@
   </div>
 
   <script>
-    // ── Constants ─────────────────────────────────────────────────
     const COLORS = ['#2d6a8a','#a0522d','#2e7d5e','#7b4ea6','#c0722a','#3d6b99'];
-
     let students      = [];
     let currentFilter = 'all';
     let chartInstance = null;
 
-    // ── Auth helpers ──────────────────────────────────────────────
-    function getToken() {
-      return localStorage.getItem("token");
-    }
+    // ── Auth ──────────────────────────────────────────────────────
+    function getToken() { return localStorage.getItem("token"); }
 
-    // FIX: single auth header function used everywhere
     function authHeaders() {
       return {
         "Content-Type":  "application/json",
@@ -563,31 +586,56 @@
     }
 
     function logout() {
-      // FIX: clear token not "loggedIn"
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      window.location.href = "/";   // FIX: Flask route not /login.html
-    }
-
-    // FIX: check token exists on page load — not "loggedIn"
-    if (!getToken()) {
       window.location.href = "/";
     }
 
-    // ── Nav setup ─────────────────────────────────────────────────
+    if (!getToken()) window.location.href = "/";
+
     document.getElementById("navUser").textContent =
       localStorage.getItem("user") || "";
 
     document.getElementById("navDate").textContent =
       new Date().toLocaleDateString("en-IN", {
         weekday: "long", day: "numeric",
-        month: "long",  year: "numeric"
+        month: "long", year: "numeric"
       });
 
-    // FIX: logout button properly wired
     document.getElementById("logoutBtn").addEventListener("click", logout);
 
-    // ── Helpers ───────────────────────────────────────────────────
+    // ── Modal ─────────────────────────────────────────────────────
+    function openModal()  { document.getElementById("instructionModal").classList.add("open"); updateModalCount(); }
+    function closeModal() { document.getElementById("instructionModal").classList.remove("open"); }
+
+    document.getElementById("startAttendanceBtn").addEventListener("click", openModal);
+    document.getElementById("closeInstructionModal").addEventListener("click", closeModal);
+    document.getElementById("gotItBtn").addEventListener("click", closeModal);
+
+    // Close modal on overlay click
+    document.getElementById("instructionModal").addEventListener("click", function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    // Live count inside modal
+    async function updateModalCount() {
+      try {
+        const res  = await fetch("/api/status", { headers: authHeaders() });
+        if (!res.ok) return;
+        const data = await res.json();
+        document.getElementById("liveMarkedCount").innerHTML =
+          `<strong>${data.marked_today}</strong> marked today`;
+      } catch(e) {}
+    }
+
+    // Refresh count every 3 seconds while modal is open
+    setInterval(() => {
+      if (document.getElementById("instructionModal").classList.contains("open")) {
+        updateModalCount();
+      }
+    }, 3000);
+
+    // ── Table ─────────────────────────────────────────────────────
     function initials(name) {
       return name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
     }
@@ -621,8 +669,7 @@
           <td><span class="time-text">${s.time}</span></td>
           <td>
             <span class="badge ${s.status}">
-              <span class="badge-dot"></span>
-              ${s.status}
+              <span class="badge-dot"></span>${s.status}
             </span>
           </td>
           <td></td>
@@ -633,12 +680,9 @@
     function updateStats() {
       const present = students.filter(s => s.status === "present").length;
       const absent  = students.filter(s => s.status === "absent").length;
-      const late    = students.filter(s => s.status === "late").length;
-
       document.getElementById("countTotal").textContent   = students.length;
       document.getElementById("countPresent").textContent = present;
       document.getElementById("countAbsent").textContent  = absent;
-      document.getElementById("countLate").textContent    = late;
       document.getElementById("totalCount").textContent   = students.length;
     }
 
@@ -652,14 +696,12 @@
       renderRows(filtered);
     }
 
-    // FIX: update chart data instead of destroying and recreating
     function updateChart() {
       const present = students.filter(s => s.status === "present").length;
-      const late    = students.filter(s => s.status === "late").length;
       const absent  = students.filter(s => s.status === "absent").length;
 
       if (chartInstance) {
-        chartInstance.data.datasets[0].data = [present, late, absent];
+        chartInstance.data.datasets[0].data = [present, absent];
         chartInstance.update();
         return;
       }
@@ -668,10 +710,10 @@
         document.getElementById("attendanceChart").getContext("2d"), {
           type: "doughnut",
           data: {
-            labels: ["Present", "Late", "Absent"],
+            labels: ["Present", "Absent"],
             datasets: [{
-              data: [present, late, absent],
-              backgroundColor: ["#1e7a43", "#9a6e00", "#c84b31"],
+              data: [present, absent],
+              backgroundColor: ["#1e7a43", "#c84b31"],
               borderWidth: 0
             }]
           },
@@ -684,23 +726,13 @@
       );
     }
 
-    // FIX: all fetches now send JWT token via authHeaders()
     async function loadData() {
       try {
-        const res = await fetch("/api/full_records", {
-          headers: authHeaders()
-        });
-
-        // FIX: redirect to login if token expired
-        if (res.status === 401) {
-          logout();
-          return;
-        }
-
-        if (!res.ok) throw new Error("Server error: " + res.status);
+        const res = await fetch("/api/full_records", { headers: authHeaders() });
+        if (res.status === 401) { logout(); return; }
+        if (!res.ok) throw new Error("Server error");
 
         const data = await res.json();
-
         students = data.map((d, i) => ({
           name:   d.name,
           id:     d.id || ("STU-" + (i + 1)),
@@ -712,41 +744,29 @@
         updateStats();
         applyFilters();
         updateChart();
-
       } catch (err) {
         console.error("Error loading data:", err);
       }
     }
 
-    // FIX: export also sends JWT token
     async function exportCSV() {
       try {
-        const res = await fetch("/api/full_records", {
-          headers: authHeaders()
-        });
-
+        const res  = await fetch("/api/full_records", { headers: authHeaders() });
         if (res.status === 401) { logout(); return; }
-
         const data = await res.json();
         let csv = "Name,Date,Time,Status\n";
-        data.forEach(r => {
-          csv += `${r.name},${r.date},${r.time},${r.status}\n`;
-        });
-
+        data.forEach(r => { csv += `${r.name},${r.date},${r.time},${r.status}\n`; });
         const blob = new Blob([csv], { type: "text/csv" });
         const url  = URL.createObjectURL(blob);
         const a    = document.createElement("a");
-        a.href     = url;
+        a.href = url;
         a.download = `attendance_${new Date().toISOString().slice(0,10)}.csv`;
         a.click();
         URL.revokeObjectURL(url);
-
-      } catch (err) {
-        console.error("Export failed:", err);
-      }
+      } catch (err) { console.error("Export failed:", err); }
     }
 
-    // ── Filter tabs ───────────────────────────────────────────────
+    // ── Filters & Search ──────────────────────────────────────────
     document.querySelectorAll(".filter-tab").forEach(btn => {
       btn.addEventListener("click", () => {
         document.querySelectorAll(".filter-tab")
@@ -757,14 +777,10 @@
       });
     });
 
-    // ── Search ────────────────────────────────────────────────────
-    document.getElementById("searchInput")
-      .addEventListener("input", applyFilters);
+    document.getElementById("searchInput").addEventListener("input", applyFilters);
 
     // ── Init ──────────────────────────────────────────────────────
     loadData();
-
-    // Auto-refresh every 5 seconds
     setInterval(loadData, 5000);
   </script>
 </body>

@@ -50,8 +50,8 @@ def already_marked_today(name: str) -> bool:
 
 def write_attendance(name: str) -> str:
     time_now = datetime.now()
-    cutoff   = time_now.replace(hour=9, minute=10, second=0, microsecond=0)
-    status   = "late" if time_now > cutoff else "present"
+    # FIX: only present or absent — no late
+    status = "present"
     db.session.add(AttendanceRecord(
         name      = name,
         timestamp = time_now.strftime("%Y-%m-%d %H:%M:%S"),
@@ -149,6 +149,23 @@ def reload_faces():
     # Server doesn't run face recognition — just acknowledge
     return jsonify({"message": "Acknowledged"}), 200
 
+# Add to server.py
+@app.route("/api/mark_absent", methods=["POST"])
+def mark_absent():
+    if not is_jwt_valid() and not is_api_request_valid(request):
+        return jsonify({"error": "Unauthorised"}), 401
+    data = request.get_json(silent=True) or {}
+    name = data.get("name", "").strip()
+    if not name:
+        return jsonify({"error": "No name"}), 400
+    time_now = datetime.now()
+    db.session.add(AttendanceRecord(
+        name      = name,
+        timestamp = time_now.strftime("%Y-%m-%d %H:%M:%S"),
+        status    = "absent"
+    ))
+    db.session.commit()
+    return jsonify({"status": "absent", "name": name}), 200
 # ── Run ───────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
