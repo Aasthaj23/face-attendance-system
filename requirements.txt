@@ -4,3 +4,6 @@ flask-jwt-extended
 flask-sqlalchemy
 gunicorn
 requests
+Pillow
+numpy
+face-recognition
