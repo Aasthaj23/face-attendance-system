@@ -441,56 +441,60 @@
     function initials(name) {
       return name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
     }
-
-    // ── Load and render students ──────────────────────────────────
-    async function loadStudents() {
-      try {
-        const res  = await fetch("/api/students", { headers: authHeaders() });
-        if (res.status === 401) { logout(); return; }
-        const data = await res.json();
-        renderStudents(data);
-      } catch(e) {
-        console.error("Failed to load students:", e);
-      }
-    }
-
-    function renderStudents(list) {
-      const grid = document.getElementById("studentsGrid");
-
-      if (list.length === 0) {
-        grid.innerHTML = `
-          <div class="empty-grid">
-            <svg viewBox="0 0 24 24">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-              <circle cx="9" cy="7" r="4"/>
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-            </svg>
-            <p>No students registered yet.<br>Click "Add Student" to get started.</p>
-          </div>`;
+async function loadStudents() {
+  try {
+   
+    const res = await fetch("/api/students");
+    if (res.status === 401) { logout(); return; }
+    
+    const data = await res.json();
+    
+    if (!Array.isArray(data)) {
+        console.error("Unexpected data format:", data);
         return;
-      }
-
-      grid.innerHTML = list.map(s => `
-        <div class="student-card">
-          <div class="student-photo-placeholder">
-            ${initials(s.name)}
-          </div>
-          <div class="student-info">
-            <div class="student-name">${s.name}</div>
-            <div class="student-roll">Roll: ${s.roll_no}</div>
-            <div class="student-added">Added ${s.added_on.split(" ")[0]}</div>
-            <div class="student-actions">
-              <button class="btn btn-danger btn-sm"
-                onclick="deleteStudent('${s.roll_no}', '${s.name}')">
-                Remove
-              </button>
-            </div>
-          </div>
-        </div>
-      `).join("");
     }
+    renderStudents(data);
+  } catch(e) {
+    console.error("Failed to load students:", e);
+  }
+}
 
+function renderStudents(list) {
+  const grid = document.getElementById("studentsGrid");
+
+  if (list.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-grid">
+        <svg viewBox="0 0 24 24">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+        <p>No students registered yet.<br>Click "Add Student" to get started.</p>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = list.map((s, i) => `
+    <div class="student-card" style="animation-delay: ${i * 0.05}s">
+      <div class="student-photo-placeholder">
+        ${initials(s.name)}
+      </div>
+      <div class="student-info">
+        <div class="student-name">${s.name}</div>
+        <div class="student-roll">Roll: ${s.roll_no}</div>
+        <div class="student-added">Added ${s.added_on || 'Today'}</div>
+        <div class="student-actions">
+          <button class="btn btn-danger btn-sm"
+            onclick="deleteStudent('${s.roll_no}', '${s.name}')">
+            Remove
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join("");
+}
     // ── Delete student ────────────────────────────────────────────
     async function deleteStudent(rollNo, name) {
       if (!confirm(`Remove ${name} from the system? This will also delete their photo.`)) return;
