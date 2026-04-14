@@ -1,68 +1,623 @@
-```html
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Students</title>
+  <title>Students — AttendanceOS</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-<style>
+    :root {
+      --ink: #0d1117;
+      --paper: #f5f0e8;
+      --accent: #c84b31;
+      --muted: #8a8070;
+      --line: #d4cdc0;
+      --present-bg: #edf7f0;
+      --present-fg: #1e7a43;
+    }
 
-body{
-font-family:Arial;
-background:#f4f4f4;
-}
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--paper);
+      min-height: 100vh;
+      color: var(--ink);
+    }
 
-table{
-width:80%;
-margin:auto;
-border-collapse:collapse;
-background:white;
-}
+    .nav {
+      background: var(--ink);
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 0 48px; height: 64px;
+      position: sticky; top: 0; z-index: 100;
+    }
 
-th,td{
-padding:12px;
-border:1px solid #ccc;
-text-align:center;
-}
+    .nav-brand {
+      display: flex; align-items: center;
+      gap: 12px; text-decoration: none;
+    }
 
-th{
-background:#2193b0;
-color:white;
-}
+    .nav-mark {
+      width: 36px; height: 36px;
+      border: 1.5px solid rgba(255,255,255,0.25);
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+    }
 
-h2{
-text-align:center;
-}
+    .nav-mark svg { width: 18px; height: 18px; fill: none; stroke: white; stroke-width: 1.5; }
+    .nav-name { font-family: 'DM Serif Display', serif; font-size: 20px; color: white; }
+    .nav-right { display: flex; align-items: center; gap: 16px; }
 
-</style>
+    .nav-link {
+      font-size: 13px; color: rgba(255,255,255,0.6);
+      text-decoration: none; font-weight: 400;
+      transition: color 0.15s;
+    }
 
+    .nav-link:hover { color: white; }
+    .nav-link.active { color: white; font-weight: 500; }
+
+    .logout-btn {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.08);
+      border: 1.5px solid rgba(255,255,255,0.15);
+      border-radius: 7px; padding: 7px 14px;
+      color: rgba(255,255,255,0.7);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px; font-weight: 500;
+      cursor: pointer; transition: all 0.18s;
+    }
+
+    .logout-btn:hover { background: rgba(255,255,255,0.15); color: white; }
+    .logout-btn svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.5; }
+
+    .page { max-width: 1100px; margin: 0 auto; padding: 48px 32px 80px; }
+
+    .page-header {
+      display: flex; align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 40px;
+      animation: fadeUp 0.5s ease both;
+      gap: 20px; flex-wrap: wrap;
+    }
+
+    .page-eyebrow {
+      font-size: 11px; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 2px;
+      color: var(--accent); margin-bottom: 8px;
+    }
+
+    .page-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 48px; line-height: 1;
+      letter-spacing: -1px; color: var(--ink);
+    }
+
+    .page-title em { font-style: italic; color: var(--muted); }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 10px 18px; border-radius: 7px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px; font-weight: 500;
+      cursor: pointer; border: none;
+      transition: all 0.18s;
+    }
+
+    .btn svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.8; }
+    .btn-solid { background: var(--ink); color: white; }
+    .btn-solid:hover { background: #1e2730; transform: translateY(-1px); }
+    .btn-danger { background: #fdf0ee; color: var(--accent); border: 1.5px solid #f5c4b3; }
+    .btn-danger:hover { background: var(--accent); color: white; }
+
+    /* ── Student grid ── */
+    .students-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+      animation: fadeUp 0.5s ease 0.1s both;
+    }
+
+    .student-card {
+      background: white;
+      border: 1.5px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .student-card:hover {
+      border-color: var(--ink);
+      transform: translateY(-2px);
+    }
+
+    .student-photo {
+      width: 100%; aspect-ratio: 1;
+      object-fit: cover;
+      display: block;
+      background: #f0ede8;
+    }
+
+    .student-photo-placeholder {
+      width: 100%; aspect-ratio: 1;
+      display: flex; align-items: center; justify-content: center;
+      background: #f0ede8;
+      font-family: 'DM Serif Display', serif;
+      font-size: 48px; font-style: italic;
+      color: var(--muted);
+    }
+
+    .student-info {
+      padding: 14px 16px;
+      border-top: 1.5px solid var(--line);
+    }
+
+    .student-name {
+      font-weight: 500; font-size: 14px;
+      margin-bottom: 3px;
+    }
+
+    .student-roll {
+      font-size: 11px; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    .student-added {
+      font-size: 11px; color: var(--muted);
+      font-weight: 300;
+    }
+
+    .student-actions {
+      display: flex; gap: 6px; margin-top: 10px;
+    }
+
+    .btn-sm {
+      padding: 5px 10px; font-size: 11px; border-radius: 5px;
+    }
+
+    /* ── Empty state ── */
+    .empty-grid {
+      grid-column: 1 / -1;
+      text-align: center; padding: 60px 24px;
+    }
+
+    .empty-grid svg {
+      width: 40px; height: 40px;
+      fill: none; stroke: var(--line); stroke-width: 1.2;
+      margin-bottom: 12px;
+    }
+
+    .empty-grid p { font-size: 14px; color: var(--muted); }
+
+    /* ── Modal ── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: none; align-items: center; justify-content: center;
+      z-index: 999;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: white; border-radius: 16px;
+      width: 480px; max-width: 95vw;
+      overflow: hidden;
+      animation: slideUp 0.3s ease;
+    }
+
+    .modal-header {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      border-bottom: 1.5px solid var(--line);
+    }
+
+    .modal-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px; color: var(--ink);
+    }
+
+    .modal-close {
+      width: 32px; height: 32px;
+      border-radius: 8px; border: 1.5px solid var(--line);
+      background: transparent; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted); transition: all 0.15s;
+    }
+
+    .modal-close:hover { border-color: var(--accent); color: var(--accent); }
+    .modal-close svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+    .modal-body { padding: 24px; }
+
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1.5px solid var(--line);
+      display: flex; align-items: center;
+      justify-content: flex-end; gap: 10px;
+    }
+
+    /* ── Form fields ── */
+    .form-field { margin-bottom: 20px; }
+
+    .form-field label {
+      display: block; font-size: 11px; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 1.5px;
+      color: var(--muted); margin-bottom: 8px;
+    }
+
+    .form-field input[type="text"] {
+      width: 100%; padding: 11px 14px;
+      background: white; border: 1.5px solid var(--line);
+      border-radius: 8px; font-family: 'DM Sans', sans-serif;
+      font-size: 14px; color: var(--ink);
+      outline: none; transition: border-color 0.2s;
+    }
+
+    .form-field input[type="text"]:focus { border-color: var(--ink); }
+
+    /* Photo upload area */
+    .photo-upload {
+      border: 2px dashed var(--line);
+      border-radius: 10px; padding: 24px;
+      text-align: center; cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      position: relative;
+    }
+
+    .photo-upload:hover { border-color: var(--ink); background: #faf8f4; }
+
+    .photo-upload input[type="file"] {
+      position: absolute; inset: 0;
+      opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+
+    .photo-upload svg {
+      width: 32px; height: 32px;
+      fill: none; stroke: var(--muted); stroke-width: 1.5;
+      margin-bottom: 8px;
+    }
+
+    .photo-upload p { font-size: 13px; color: var(--muted); }
+    .photo-upload span { font-size: 11px; color: var(--muted); font-weight: 300; }
+
+    .photo-preview {
+      width: 100%; max-height: 200px;
+      object-fit: cover; border-radius: 8px;
+      display: none; margin-top: 12px;
+    }
+
+    /* Error / success messages */
+    .form-msg {
+      font-size: 12px; margin-top: 8px;
+      padding: 8px 12px; border-radius: 6px;
+      display: none;
+    }
+
+    .form-msg.error   { background: #fdf0ee; color: var(--accent); display: block; }
+    .form-msg.success { background: var(--present-bg); color: var(--present-fg); display: block; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      .nav { padding: 0 20px; }
+      .page { padding: 28px 16px 60px; }
+      .page-title { font-size: 36px; }
+      .students-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
 </head>
-
 <body>
 
-<h2>Student List</h2>
+  <nav class="nav">
+    <a class="nav-brand" href="/dashboard">
+      <div class="nav-mark">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <span class="nav-name">AttendanceOS</span>
+    </a>
+    <div class="nav-right">
+      <a href="/dashboard" class="nav-link">Dashboard</a>
+      <a href="/students" class="nav-link active">Students</a>
+      <button class="logout-btn" id="logoutBtn">
+        <svg viewBox="0 0 24 24">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        Logout
+      </button>
+    </div>
+  </nav>
 
-<table>
+  <!-- Add Student Modal -->
+  <div class="modal-overlay" id="addModal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">Add Student</span>
+        <button class="modal-close" id="closeAddModal">
+          <svg viewBox="0 0 24 24">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
 
-<tr>
-<th>ID</th>
-<th>Name</th>
-<th>RFID Card</th>
-</tr>
+        <div class="form-field">
+          <label>Full Name</label>
+          <input type="text" id="studentName" placeholder="e.g. Aastha Jain">
+        </div>
 
-<tr>
-<td>1</td>
-<td>Aastha Jain</td>
-<td>3F45A89</td>
-</tr>
+        <div class="form-field">
+          <label>Roll Number</label>
+          <input type="text" id="studentRoll" placeholder="e.g. CSE2301">
+        </div>
 
-<tr>
-<td>2</td>
-<td>Rahul Sharma</td>
-<td>7D98F22</td>
-</tr>
+        <div class="form-field">
+          <label>Photo</label>
+          <div class="photo-upload" id="photoUploadArea">
+            <input type="file" id="photoInput" accept="image/*">
+            <svg viewBox="0 0 24 24">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+              <circle cx="12" cy="13" r="4"/>
+            </svg>
+            <p>Click to upload photo</p>
+            <span>JPG, PNG — clear face photo required</span>
+          </div>
+          <img id="photoPreview" class="photo-preview" alt="Preview">
+        </div>
 
-</table>
+        <div class="form-msg" id="formMsg"></div>
 
+      </div>
+      <div class="modal-footer">
+        <button class="btn" style="background:white; border:1.5px solid var(--line); color:var(--ink);"
+          id="cancelAddBtn">Cancel</button>
+        <button class="btn btn-solid" id="saveStudentBtn">
+          <svg viewBox="0 0 24 24">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+            <polyline points="17 21 17 13 7 13 7 21"/>
+            <polyline points="7 3 7 8 15 8"/>
+          </svg>
+          Save Student
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page -->
+  <div class="page">
+
+    <div class="page-header">
+      <div>
+        <p class="page-eyebrow">Registry</p>
+        <h1 class="page-title">Registered<br><em>Students</em></h1>
+      </div>
+      <button class="btn btn-solid" id="openAddModal">
+        <svg viewBox="0 0 24 24">
+          <line x1="12" y1="5" x2="12" y2="19"/>
+          <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        Add Student
+      </button>
+    </div>
+
+    <div class="students-grid" id="studentsGrid">
+      <!-- Injected by JS -->
+    </div>
+
+  </div>
+
+  <script>
+    // ── Auth ──────────────────────────────────────────────────────
+    function getToken() { return localStorage.getItem("token"); }
+    function authHeaders() {
+      return {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + getToken()
+      };
+    }
+    function logout() {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/";
+    }
+    if (!getToken()) window.location.href = "/";
+    document.getElementById("logoutBtn").addEventListener("click", logout);
+
+    // ── Helpers ───────────────────────────────────────────────────
+    function initials(name) {
+      return name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
+    }
+
+    // ── Load and render students ──────────────────────────────────
+    async function loadStudents() {
+      try {
+        const res  = await fetch("/api/students", { headers: authHeaders() });
+        if (res.status === 401) { logout(); return; }
+        const data = await res.json();
+        renderStudents(data);
+      } catch(e) {
+        console.error("Failed to load students:", e);
+      }
+    }
+
+    function renderStudents(list) {
+      const grid = document.getElementById("studentsGrid");
+
+      if (list.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-grid">
+            <svg viewBox="0 0 24 24">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+            <p>No students registered yet.<br>Click "Add Student" to get started.</p>
+          </div>`;
+        return;
+      }
+
+      grid.innerHTML = list.map(s => `
+        <div class="student-card">
+          <div class="student-photo-placeholder">
+            ${initials(s.name)}
+          </div>
+          <div class="student-info">
+            <div class="student-name">${s.name}</div>
+            <div class="student-roll">Roll: ${s.roll_no}</div>
+            <div class="student-added">Added ${s.added_on.split(" ")[0]}</div>
+            <div class="student-actions">
+              <button class="btn btn-danger btn-sm"
+                onclick="deleteStudent('${s.roll_no}', '${s.name}')">
+                Remove
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    // ── Delete student ────────────────────────────────────────────
+    async function deleteStudent(rollNo, name) {
+      if (!confirm(`Remove ${name} from the system? This will also delete their photo.`)) return;
+
+      try {
+        const res = await fetch(`/api/students/${rollNo}`, {
+          method: "DELETE",
+          headers: authHeaders()
+        });
+        if (res.status === 401) { logout(); return; }
+        const data = await res.json();
+        if (res.ok) {
+          loadStudents();
+        } else {
+          alert(data.error || "Failed to delete");
+        }
+      } catch(e) {
+        alert("Server error");
+      }
+    }
+
+    // ── Add student modal ─────────────────────────────────────────
+    let photoBase64 = null;
+
+    function openAddModal() {
+      document.getElementById("addModal").classList.add("open");
+      document.getElementById("studentName").value = "";
+      document.getElementById("studentRoll").value = "";
+      document.getElementById("photoPreview").style.display = "none";
+      document.getElementById("photoPreview").src = "";
+      document.getElementById("photoInput").value = "";
+      document.getElementById("formMsg").className = "form-msg";
+      document.getElementById("formMsg").textContent = "";
+      photoBase64 = null;
+    }
+
+    function closeAddModal() {
+      document.getElementById("addModal").classList.remove("open");
+    }
+
+    document.getElementById("openAddModal").addEventListener("click", openAddModal);
+    document.getElementById("closeAddModal").addEventListener("click", closeAddModal);
+    document.getElementById("cancelAddBtn").addEventListener("click", closeAddModal);
+
+    document.getElementById("addModal").addEventListener("click", function(e) {
+      if (e.target === this) closeAddModal();
+    });
+
+    // Photo preview
+    document.getElementById("photoInput").addEventListener("change", function() {
+      const file = this.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        photoBase64 = e.target.result;   // full base64 with header
+        const preview = document.getElementById("photoPreview");
+        preview.src = photoBase64;
+        preview.style.display = "block";
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Save student
+    document.getElementById("saveStudentBtn").addEventListener("click", async function() {
+      const name    = document.getElementById("studentName").value.trim();
+      const roll_no = document.getElementById("studentRoll").value.trim();
+      const msg     = document.getElementById("formMsg");
+
+      // Reset message
+      msg.className = "form-msg";
+      msg.textContent = "";
+
+      // Validate
+      if (!name) {
+        msg.className = "form-msg error";
+        msg.textContent = "Please enter the student's name.";
+        return;
+      }
+      if (!roll_no) {
+        msg.className = "form-msg error";
+        msg.textContent = "Please enter a roll number.";
+        return;
+      }
+      if (!photoBase64) {
+        msg.className = "form-msg error";
+        msg.textContent = "Please upload a photo.";
+        return;
+      }
+
+      // Disable button while saving
+      const btn = document.getElementById("saveStudentBtn");
+      btn.textContent = "Saving...";
+      btn.disabled = true;
+
+      try {
+        const res = await fetch("/api/students", {
+          method:  "POST",
+          headers: authHeaders(),
+          body:    JSON.stringify({ name, roll_no, photo: photoBase64 })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          msg.className = "form-msg success";
+          msg.textContent = `✓ ${name} registered successfully!`;
+          setTimeout(() => {
+            closeAddModal();
+            loadStudents();
+          }, 1200);
+        } else {
+          msg.className = "form-msg error";
+          msg.textContent = data.error || "Failed to save student.";
+        }
+
+      } catch(e) {
+        msg.className = "form-msg error";
+        msg.textContent = "Could not reach server.";
+      }
+
+      btn.textContent = "Save Student";
+      btn.disabled = false;
+    });
+
+    // ── Init ──────────────────────────────────────────────────────
+    loadStudents();
+  </script>
 </body>
 </html>
-```
