@@ -59,23 +59,31 @@ known_names     = []
 def load_known_faces():
     known_encodings.clear()
     known_names.clear()
+
     if not FACE_RECOGNITION_AVAILABLE:
         return
-    for filename in os.listdir(KNOWN_DIR):
-        if filename.lower().endswith((".jpg", ".jpeg", ".png")):
-            path = os.path.join(KNOWN_DIR, filename)
-            name = os.path.splitext(filename)[0].split("_")[0]
-            try:
-                img       = Image.open(path).convert("RGB")
-                img_array = np.array(img, dtype=np.uint8)
-                encs      = face_recognition.face_encodings(img_array)
-                if encs:
-                    known_encodings.append(encs[0])
-                    known_names.append(name)
-            except Exception as e:
-                print(f"Error loading {filename}: {e}")
 
-load_known_faces()
+    students = load_students()
+
+    for student in students:
+        filename = student.get("filename")
+        if not filename:
+            continue
+
+        path = os.path.join(KNOWN_DIR, filename)
+        if not os.path.exists(path):
+            continue
+
+        try:
+            img = Image.open(path).convert("RGB")
+            img_array = np.array(img, dtype=np.uint8)
+            encs = face_recognition.face_encodings(img_array)
+
+            if encs:
+                known_encodings.append(encs[0])
+                known_names.append(student["name"])
+        except Exception as e:
+            print(f"Error loading {filename}: {e}")
 
 # ── Models ────────────────────────────────────────────────────────────
 class AttendanceRecord(db.Model):
@@ -150,13 +158,21 @@ def students_page():
 # Serve student photos
 @app.route("/api/photo/<roll_no>")
 def get_photo(roll_no):
-    if not is_jwt_valid():
-        return jsonify({"error": "Unauthorized"}), 401
+    # No JWT check here because <img> can’t send Authorization
     students = load_students()
-    student  = next((s for s in students if s["roll_no"] == roll_no), None)
-    if student and os.path.exists(os.path.join(KNOWN_DIR, student["filename"])):
-        return send_from_directory(KNOWN_DIR, student["filename"])
-    return jsonify({"error": "Not found"}), 404
+    student = next((s for s in students if s["roll_no"] == roll_no), None)
+    if not student:
+        return jsonify({"error": "Student not found"}), 404
+
+    filename = student.get("filename")
+    if not filename:
+        return jsonify({"error": "Photo not set"}), 404
+
+    path = os.path.join(KNOWN_DIR, filename)
+    if not os.path.exists(path):
+        return jsonify({"error": "Photo file missing"}), 404
+
+    return send_from_directory(KNOWN_DIR, filename)
 
 # ── Auth ──────────────────────────────────────────────────────────────
 @app.route("/api/login", methods=["POST"])
@@ -199,7 +215,9 @@ def handle_students():
                 if not encs:
                     return jsonify({"error": "No face detected in the photo"}), 400
 
-            filename = f"{name}_{roll}.jpg"
+            safe_name = "".join(c for c in name if c.isalnum() or c in (" ", "_", "-")).strip().replace(" ", "_")
+            safe_roll = "".join(c for c in roll if c.isalnum() or c in ("_", "-")).strip()
+            filename = f"{safe_name}_{safe_roll}.jpg"
             img.save(os.path.join(KNOWN_DIR, filename), "JPEG")
 
             students = load_students()
