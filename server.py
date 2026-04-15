@@ -273,6 +273,29 @@ def delete_student(roll_no):
         return jsonify({"message": "Student deleted"})
     return jsonify({"error": "Not found"}), 404
 
+
+@app.route("/api/start_attendance", methods=["POST"])
+def start_attendance():
+    if not is_jwt_valid():
+        return jsonify({"error": "Unauthorized"}), 401
+
+    students = load_students()
+    now_date = datetime.now().strftime("%Y-%m-%d")
+    now_time = datetime.now().strftime("%H:%M:%S")
+
+    for s in students:
+        record = AttendanceRecord(
+            name=s["name"],
+            roll_no=s["roll_no"],
+            subject="General",
+            timestamp=f"{now_date} {now_time}",
+            status="absent"
+        )
+        db.session.add(record)
+
+    db.session.commit()
+    return jsonify({"message": "Attendance initialized"})
+
 # ── Attendance Records ────────────────────────────────────────────────
 @app.route("/api/full_records")
 def full_records():
@@ -337,14 +360,29 @@ def add_record():
     if not name:
         return jsonify({"error": "Name is required"}), 400
 
-    record = AttendanceRecord(
-        name      = name,
-        roll_no   = roll_no,
-        subject   = subject,
-        timestamp = f"{date} {time}",
-        status    = status
+    # Check if record already exists for today + subject
+    today = datetime.now().strftime("%Y-%m-%d")
+
+    record = AttendanceRecord.query.filter(
+        AttendanceRecord.roll_no == roll_no,
+        AttendanceRecord.subject == subject,
+        AttendanceRecord.timestamp.startswith(today)
+    ).first()
+ 
+    if record:
+        # ✅ UPDATE existing (absent → present)
+        record.status = "present"
+    else:
+        # ✅ Create new only if not exists
+        record = AttendanceRecord(
+            name      = name,
+            roll_no   = roll_no,
+            subject   = subject,
+            timestamp = f"{date} {time}",
+            status    = "present"
     )
-    db.session.add(record)
+        db.session.add(record)
+
     db.session.commit()
     return jsonify({"message": "Record added", "id": record.id})
 

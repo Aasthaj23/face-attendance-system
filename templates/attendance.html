@@ -3,7 +3,6 @@
 <head>
   <title>Attendance Records</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -374,11 +373,6 @@
       </div>
     </div>
 
-    <!-- Chart -->
-    <div class="chart-card" style="max-width:320px;margin:0 auto 28px;">
-      <canvas id="attendanceChart"></canvas>
-    </div>
-
     <!-- Toolbar -->
     <div class="toolbar">
       <div class="search-wrap">
@@ -424,7 +418,6 @@
     let currentFilter = 'all';
     let currentRange  = 'day';
     let currentSubject = 'all';
-    let chartInstance = null;
     let subjects      = [];
 
     // ── Auth ──────────────────────────────────────────────────────
@@ -546,33 +539,6 @@
       renderRows(filtered);
     }
 
-    function updateChart() {
-      const present = allRecords.filter(s => s.status === "present").length;
-      const absent  = allRecords.filter(s => s.status === "absent").length;
-      if (chartInstance) {
-        chartInstance.data.datasets[0].data = [present, absent];
-        chartInstance.update();
-        return;
-      }
-      chartInstance = new Chart(
-        document.getElementById("attendanceChart").getContext("2d"), {
-          type: "doughnut",
-          data: {
-            labels: ["Present", "Absent"],
-            datasets: [{ data: [present, absent], backgroundColor: ["#1e7a43", "#c84b31"], borderWidth: 0 }]
-          },
-          options: {
-            responsive: true, maintainAspectRatio: true,
-            plugins: {
-              legend: { position: "bottom" },
-              tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed}` } }
-            },
-            cutout: "65%"
-          }
-        }
-      );
-    }
-
     // ── Load data ─────────────────────────────────────────────────
     async function loadData() {
       try {
@@ -584,7 +550,6 @@
         allRecords = await res.json();
         updateStats();
         applyFilters();
-        updateChart();
       } catch(err) {
         console.error("Error loading data:", err);
       }
@@ -612,7 +577,6 @@
             badge.innerHTML = `<span class="badge-dot"></span>${data.status}`;
           }
           updateStats();
-          updateChart();
         }
       } catch(err) {
         console.error("Toggle failed:", err);
