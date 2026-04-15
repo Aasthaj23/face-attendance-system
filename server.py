@@ -350,5 +350,52 @@ def api_status():
         "threshold":      ATTENDANCE_THRESHOLD
     })
 
+@app.route("/api/detect", methods=["POST"])
+def detect():
+    # API Key security (for camera)
+    api_key = request.headers.get("X-API-Key")
+    if api_key != API_KEY:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    data = request.get_json() or {}
+    name = data.get("name", "").strip()
+
+    if not name:
+        return jsonify({"error": "No name provided"}), 400
+
+    now = datetime.now()
+    today = now.strftime("%Y-%m-%d")
+
+    # Check duplicate (same day)
+    existing = AttendanceRecord.query.filter(
+        AttendanceRecord.name == name,
+        AttendanceRecord.timestamp.startswith(today)
+    ).first()
+
+    if existing:
+        return jsonify({
+            "status": "duplicate",
+            "message": "Already marked today"
+        })
+
+    # ✅ Only PRESENT (as you wanted)
+    record = AttendanceRecord(
+        name=name,
+        roll_no="",
+        subject="General",
+        timestamp=now.strftime("%Y-%m-%d %H:%M:%S"),
+        status="present"
+    )
+
+    db.session.add(record)
+    db.session.commit()
+
+    print(f"[+] Marked: {name} (present)")
+
+    return jsonify({
+        "status": "present",
+        "name": name
+    })
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=False)
