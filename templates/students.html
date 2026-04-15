@@ -341,7 +341,7 @@
         const pct      = s.attendance_pct || 0;
         const cls      = pctClass(pct, s.total_classes > 0);
         const hasData  = s.total_classes > 0;
-        const photoUrl = `/api/photo/${s.roll_no}`;
+        const photoUrl = `/api/photo/${s.roll_no}?t=${s.photo_token}`;
 
         return `
           <div class="student-card ${s.below_threshold ? 'below-threshold' : ''}" style="animation-delay:${i*0.04}s">

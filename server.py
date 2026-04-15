@@ -2,10 +2,12 @@ import os
 import json
 import base64
 import io
+import hashlib
 import numpy as np
 from datetime import datetime, timedelta
 from PIL import Image
-from flask import Flask, render_template, request, jsonify, redirect, send_from_directory, send_file
+
+from flask import Flask, render_template, request, jsonify, redirect, send_from_directory, abort
 from flask_cors import CORS
 from flask_jwt_extended import (
     JWTManager,
@@ -27,9 +29,14 @@ jwt = JWTManager(app)
 CORS(app)
 
 # ── Settings ──────────────────────────────────────────────────────────
-API_KEY    = os.environ.get("API_KEY", "85ba7587e257e99ac59ad97a3e6c1ebfba1a0318ced994a895d4f9f13b28ce7d")
-KNOWN_DIR  = "Known"
+API_KEY      = os.environ.get("API_KEY", "85ba7587e257e99ac59ad97a3e6c1ebfba1a0318ced994a895d4f9f13b28ce7d")
+PHOTO_SECRET = os.environ.get("PHOTO_SECRET", "photo_secret_key_changeme")
+KNOWN_DIR    = "Known"
 STUDENTS_FILE = "students.json"
+
+def photo_token(roll_no: str) -> str:
+    """Generate a lightweight signed token so <img src> photo URLs work without JWT headers."""
+    return hashlib.sha256(f"{PHOTO_SECRET}:{roll_no}".encode()).hexdigest()[:16]
 
 # ── Hardcoded subjects ─────────────────────────────────────────────────
 SUBJECTS = [
@@ -58,31 +65,24 @@ known_names     = []
 def load_known_faces():
     known_encodings.clear()
     known_names.clear()
-
     if not FACE_RECOGNITION_AVAILABLE:
         return
+    for filename in os.listdir(KNOWN_DIR):
+        if filename.lower().endswith((".jpg", ".jpeg", ".png")):
+            path = os.path.join(KNOWN_DIR, filename)
+            # filename format: "Full Name_ROLLNO.jpg" — rsplit on last _ to preserve names with spaces
+            name = os.path.splitext(filename)[0].rsplit("_", 1)[0]
+            try:
+                img       = Image.open(path).convert("RGB")
+                img_array = np.array(img, dtype=np.uint8)
+                encs      = face_recognition.face_encodings(img_array)
+                if encs:
+                    known_encodings.append(encs[0])
+                    known_names.append(name)
+            except Exception as e:
+                print(f"Error loading {filename}: {e}")
 
-    students = load_students()
-
-    for student in students:
-        filename = student.get("filename")
-        if not filename:
-            continue
-
-        path = os.path.join(KNOWN_DIR, filename)
-        if not os.path.exists(path):
-            continue
-
-        try:
-            img = Image.open(path).convert("RGB")
-            img_array = np.array(img, dtype=np.uint8)
-            encs = face_recognition.face_encodings(img_array)
-
-            if encs:
-                known_encodings.append(encs[0])
-                known_names.append(student["name"])
-        except Exception as e:
-            print(f"Error loading {filename}: {e}")
+load_known_faces()
 
 # ── Models ────────────────────────────────────────────────────────────
 class AttendanceRecord(db.Model):
@@ -154,20 +154,21 @@ def dashboard():
 def students_page():
     return render_template("students.html")
 
-# Serve student photos
+# Serve student photos — no JWT needed (img tags can't send headers)
+# Instead we verify a short signed token passed as ?t=<token>
 @app.route("/api/photo/<roll_no>")
 def get_photo(roll_no):
+    token = request.args.get("t", "")
+    if token != photo_token(roll_no):
+        abort(403)
     students = load_students()
     student  = next((s for s in students if s["roll_no"] == roll_no), None)
+    if student and os.path.exists(os.path.join(KNOWN_DIR, student["filename"])):
+        resp = send_from_directory(KNOWN_DIR, student["filename"])
+        resp.headers["Cache-Control"] = "public, max-age=3600"
+        return resp
+    abort(404)
 
-    if not student:
-        return jsonify({"error": "Not found"}), 404
-
-    filepath = os.path.join(KNOWN_DIR, student["filename"])
-    if not os.path.exists(filepath):
-        return jsonify({"error": "Photo not found"}), 404
-
-    return send_file(filepath, mimetype="image/jpeg")
 # ── Auth ──────────────────────────────────────────────────────────────
 @app.route("/api/login", methods=["POST"])
 def api_login():
@@ -209,9 +210,7 @@ def handle_students():
                 if not encs:
                     return jsonify({"error": "No face detected in the photo"}), 400
 
-            safe_name = "".join(c for c in name if c.isalnum() or c in (" ", "_", "-")).strip().replace(" ", "_")
-            safe_roll = "".join(c for c in roll if c.isalnum() or c in ("_", "-")).strip()
-            filename = f"{safe_name}_{safe_roll}.jpg"
+            filename = f"{name}_{roll}.jpg"
             img.save(os.path.join(KNOWN_DIR, filename), "JPEG")
 
             students = load_students()
@@ -237,14 +236,21 @@ def handle_students():
 
     result = []
     for s in students:
-        student_records = [r for r in all_records if r.roll_no == s["roll_no"] or r.name == s["name"]]
+        # Match by roll_no first (most reliable), then case-insensitive name fallback
+        sname_lower = s["name"].lower()
+        student_records = [
+            r for r in all_records
+            if (r.roll_no and r.roll_no == s["roll_no"])
+            or (r.name.lower() == sname_lower)
+        ]
         total   = len(student_records)
         present = len([r for r in student_records if r.status == "present"])
         pct     = round((present / total * 100) if total > 0 else 0)
         result.append({
             **s,
-            "total_classes": total,
-            "present_count": present,
+            "photo_token":    photo_token(s["roll_no"]),
+            "total_classes":  total,
+            "present_count":  present,
             "attendance_pct": pct,
             "below_threshold": pct < ATTENDANCE_THRESHOLD and total > 0
         })
@@ -285,11 +291,18 @@ def full_records():
     rows    = query.order_by(AttendanceRecord.id.desc()).all()
     records = []
     for r in rows:
+        # Try to find the matching student to get their photo token
+        students_list = load_students()
+        matched = next((s for s in students_list
+                        if (r.roll_no and r.roll_no == s["roll_no"])
+                        or r.name.lower() == s["name"].lower()), None)
+        photo_tok = photo_token(matched["roll_no"]) if matched else ""
         records.append({
-            "id":      r.id,
-            "name":    r.name,
-            "roll_no": r.roll_no or "",
-            "subject": r.subject or "General",
+            "id":        r.id,
+            "name":      r.name,
+            "roll_no":   r.roll_no or (matched["roll_no"] if matched else ""),
+            "photo_token": photo_tok,
+            "subject":   r.subject or "General",
             "date":    r.timestamp.split(" ")[0],
             "time":    r.timestamp.split(" ")[1] if " " in r.timestamp else "",
             "status":  r.status
@@ -335,6 +348,71 @@ def add_record():
     db.session.commit()
     return jsonify({"message": "Record added", "id": record.id})
 
+# ── Camera script endpoints ───────────────────────────────────────────
+# Called by recognize_live.py when a face is confirmed
+@app.route("/api/detect", methods=["POST"])
+def api_detect():
+    # Accept either API key (camera script) or JWT (web)
+    api_key_header = request.headers.get("X-API-Key", "")
+    jwt_ok = is_jwt_valid()
+    if api_key_header != API_KEY and not jwt_ok:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    data    = request.get_json() or {}
+    name    = (data.get("name") or "").strip()
+    subject = data.get("subject", "General")
+
+    if not name:
+        return jsonify({"error": "Name required"}), 400
+
+    today = datetime.now().strftime("%Y-%m-%d")
+
+    # Find matching student to get roll_no
+    students = load_students()
+    matched  = next(
+        (s for s in students if s["name"].lower() == name.lower()),
+        None
+    )
+    roll_no = matched["roll_no"] if matched else ""
+
+    # Check if already marked today for this subject
+    existing = AttendanceRecord.query.filter(
+        AttendanceRecord.timestamp.startswith(today),
+        AttendanceRecord.subject  == subject,
+        AttendanceRecord.roll_no  == roll_no if roll_no else AttendanceRecord.name == name
+    ).first()
+
+    if existing:
+        return jsonify({"status": "duplicate", "message": f"{name} already marked for {subject} today"})
+
+    # Determine if late (after 9:30 AM)
+    now      = datetime.now()
+    cutoff   = now.replace(hour=9, minute=30, second=0)
+    status   = "present" if now <= cutoff else "present"  # change second "present" to "late" if you add late status
+
+    record = AttendanceRecord(
+        name      = matched["name"] if matched else name,  # use canonical name from registry
+        roll_no   = roll_no,
+        subject   = subject,
+        timestamp = now.strftime("%Y-%m-%d %H:%M:%S"),
+        status    = status
+    )
+    db.session.add(record)
+    db.session.commit()
+
+    return jsonify({"status": status, "name": name, "roll_no": roll_no, "id": record.id})
+
+
+# Called by recognize_live.py after registering a new face locally
+@app.route("/api/reload_faces", methods=["POST"])
+def api_reload_faces():
+    api_key_header = request.headers.get("X-API-Key", "")
+    if api_key_header != API_KEY and not is_jwt_valid():
+        return jsonify({"error": "Unauthorized"}), 401
+    load_known_faces()
+    return jsonify({"message": "Reloaded", "known": len(known_names)})
+
+
 # ── Status ────────────────────────────────────────────────────────────
 @app.route("/api/status")
 def api_status():
@@ -348,53 +426,6 @@ def api_status():
         "total_students": len(load_students()),
         "subjects":       SUBJECTS,
         "threshold":      ATTENDANCE_THRESHOLD
-    })
-
-@app.route("/api/detect", methods=["POST"])
-def detect():
-    # API Key security (for camera)
-    api_key = request.headers.get("X-API-Key")
-    if api_key != API_KEY:
-        return jsonify({"error": "Unauthorized"}), 401
-
-    data = request.get_json() or {}
-    name = data.get("name", "").strip()
-
-    if not name:
-        return jsonify({"error": "No name provided"}), 400
-
-    now = datetime.now()
-    today = now.strftime("%Y-%m-%d")
-
-    # Check duplicate (same day)
-    existing = AttendanceRecord.query.filter(
-        AttendanceRecord.name == name,
-        AttendanceRecord.timestamp.startswith(today)
-    ).first()
-
-    if existing:
-        return jsonify({
-            "status": "duplicate",
-            "message": "Already marked today"
-        })
-
-    # ✅ Only PRESENT (as you wanted)
-    record = AttendanceRecord(
-        name=name,
-        roll_no="",
-        subject="General",
-        timestamp=now.strftime("%Y-%m-%d %H:%M:%S"),
-        status="present"
-    )
-
-    db.session.add(record)
-    db.session.commit()
-
-    print(f"[+] Marked: {name} (present)")
-
-    return jsonify({
-        "status": "present",
-        "name": name
     })
 
 if __name__ == "__main__":
