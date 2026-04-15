@@ -5,8 +5,7 @@ import io
 import numpy as np
 from datetime import datetime, timedelta
 from PIL import Image
-
-from flask import Flask, render_template, request, jsonify, redirect, send_from_directory
+from flask import Flask, render_template, request, jsonify, redirect, send_from_directory, send_file
 from flask_cors import CORS
 from flask_jwt_extended import (
     JWTManager,
@@ -158,22 +157,17 @@ def students_page():
 # Serve student photos
 @app.route("/api/photo/<roll_no>")
 def get_photo(roll_no):
-    # No JWT check here because <img> can’t send Authorization
     students = load_students()
-    student = next((s for s in students if s["roll_no"] == roll_no), None)
+    student  = next((s for s in students if s["roll_no"] == roll_no), None)
+
     if not student:
-        return jsonify({"error": "Student not found"}), 404
+        return jsonify({"error": "Not found"}), 404
 
-    filename = student.get("filename")
-    if not filename:
-        return jsonify({"error": "Photo not set"}), 404
+    filepath = os.path.join(KNOWN_DIR, student["filename"])
+    if not os.path.exists(filepath):
+        return jsonify({"error": "Photo not found"}), 404
 
-    path = os.path.join(KNOWN_DIR, filename)
-    if not os.path.exists(path):
-        return jsonify({"error": "Photo file missing"}), 404
-
-    return send_from_directory(KNOWN_DIR, filename)
-
+    return send_file(filepath, mimetype="image/jpeg")
 # ── Auth ──────────────────────────────────────────────────────────────
 @app.route("/api/login", methods=["POST"])
 def api_login():
