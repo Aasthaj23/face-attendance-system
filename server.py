@@ -273,29 +273,6 @@ def delete_student(roll_no):
         return jsonify({"message": "Student deleted"})
     return jsonify({"error": "Not found"}), 404
 
-
-@app.route("/api/start_attendance", methods=["POST"])
-def start_attendance():
-    if not is_jwt_valid():
-        return jsonify({"error": "Unauthorized"}), 401
-
-    students = load_students()
-    now_date = datetime.now().strftime("%Y-%m-%d")
-    now_time = datetime.now().strftime("%H:%M:%S")
-
-    for s in students:
-        record = AttendanceRecord(
-            name=s["name"],
-            roll_no=s["roll_no"],
-            subject="General",
-            timestamp=f"{now_date} {now_time}",
-            status="absent"
-        )
-        db.session.add(record)
-
-    db.session.commit()
-    return jsonify({"message": "Attendance initialized"})
-
 # ── Attendance Records ────────────────────────────────────────────────
 @app.route("/api/full_records")
 def full_records():
@@ -360,31 +337,100 @@ def add_record():
     if not name:
         return jsonify({"error": "Name is required"}), 400
 
-    # Check if record already exists for today + subject
-    today = datetime.now().strftime("%Y-%m-%d")
-
-    record = AttendanceRecord.query.filter(
-        AttendanceRecord.roll_no == roll_no,
-        AttendanceRecord.subject == subject,
-        AttendanceRecord.timestamp.startswith(today)
-    ).first()
- 
-    if record:
-        # ✅ UPDATE existing (absent → present)
-        record.status = "present"
-    else:
-        # ✅ Create new only if not exists
-        record = AttendanceRecord(
-            name      = name,
-            roll_no   = roll_no,
-            subject   = subject,
-            timestamp = f"{date} {time}",
-            status    = "present"
+    record = AttendanceRecord(
+        name      = name,
+        roll_no   = roll_no,
+        subject   = subject,
+        timestamp = f"{date} {time}",
+        status    = status
     )
-        db.session.add(record)
-
+    db.session.add(record)
     db.session.commit()
     return jsonify({"message": "Record added", "id": record.id})
+
+# ── Register face from camera script ─────────────────────────────────
+# Called by recognize_live.py after capturing photos of an unknown person.
+# Accepts name, roll_no, and one or more base64 photos.
+# Saves best photo to Known/, adds to students.json, reloads encodings.
+@app.route("/api/register_face", methods=["POST"])
+def register_face():
+    api_key_header = request.headers.get("X-API-Key", "")
+    if api_key_header != API_KEY and not is_jwt_valid():
+        return jsonify({"error": "Unauthorized"}), 401
+
+    data    = request.get_json() or {}
+    name    = (data.get("name") or "").strip()
+    roll_no = (data.get("roll_no") or "").strip()
+    photos  = data.get("photos", [])   # list of base64 data-URI strings
+
+    if not name:
+        return jsonify({"error": "Name is required"}), 400
+    if not roll_no:
+        return jsonify({"error": "Roll number is required"}), 400
+    if not photos:
+        return jsonify({"error": "At least one photo is required"}), 400
+
+    students = load_students()
+    if any(s["roll_no"] == roll_no for s in students):
+        return jsonify({"error": f"Roll number {roll_no} already registered"}), 400
+
+    # Save each photo, pick the one with the clearest face encoding
+    best_encoding = None
+    best_filename = None
+    saved_files   = []
+
+    for idx, photo_data in enumerate(photos):
+        try:
+            # Strip data-URI header if present
+            if "," in photo_data:
+                photo_data = photo_data.split(",", 1)[1]
+            img_bytes = base64.b64decode(photo_data)
+            img       = Image.open(io.BytesIO(img_bytes)).convert("RGB")
+            img_array = np.array(img, dtype=np.uint8)
+
+            if FACE_RECOGNITION_AVAILABLE:
+                encs = face_recognition.face_encodings(img_array)
+                if not encs:
+                    continue   # no face in this photo — skip
+                if best_encoding is None:
+                    best_encoding = encs[0]
+                    filename      = f"{name}_{roll_no}.jpg"
+                    best_filename = filename
+                    img.save(os.path.join(KNOWN_DIR, filename), "JPEG")
+                    saved_files.append(filename)
+            else:
+                # face_recognition not available — just save first photo
+                if best_filename is None:
+                    filename      = f"{name}_{roll_no}.jpg"
+                    best_filename = filename
+                    img.save(os.path.join(KNOWN_DIR, filename), "JPEG")
+                    saved_files.append(filename)
+
+        except Exception as e:
+            print(f"[register_face] Error processing photo {idx}: {e}")
+            continue
+
+    if not best_filename:
+        return jsonify({"error": "No usable face found in any of the photos. Try better lighting."}), 400
+
+    # Add to students registry
+    students.append({
+        "name":     name,
+        "roll_no":  roll_no,
+        "filename": best_filename,
+        "added_on": datetime.now().isoformat()
+    })
+    save_students(students)
+    load_known_faces()
+
+    return jsonify({
+        "message":  f"{name} registered successfully",
+        "roll_no":  roll_no,
+        "filename": best_filename,
+        "photo_token": photo_token(roll_no),
+        "known_count": len(known_names)
+    })
+
 
 # ── Camera script endpoints ───────────────────────────────────────────
 # Called by recognize_live.py when a face is confirmed
