@@ -74,7 +74,7 @@
     .btn-start svg { width: 16px; height: 16px; }
 
     /* ── Stats ── */
-    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; animation: fadeUp 0.5s ease 0.08s both; }
+    .stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 28px; animation: fadeUp 0.5s ease 0.08s both; }
     .stat-card { background: white; border: 1.5px solid var(--line); border-radius: 12px; padding: 22px 24px; position: relative; overflow: hidden; }
     .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; border-radius: 12px 12px 0 0; }
     .stat-card.total::before   { background: var(--ink); }
@@ -232,7 +232,10 @@
     @keyframes slideUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes pulse   { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-    @media (max-width: 900px) {
+    @media (max-width: 1100px) {
+      .stats-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 700px) {
       .stats-grid { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 600px) {
@@ -346,11 +349,17 @@
         <div class="stat-value" id="countAbsent">—</div>
         <div class="stat-sub">Not checked in</div>
       </div>
-      <div class="stat-card subject-stat">
-        <div class="stat-label">Active Subject</div>
-        <div class="stat-value" id="countSubject" style="font-size:22px;font-style:normal;margin-top:4px;">All</div>
-        <div class="stat-sub" id="subjectAttRate">—</div>
-      </div>
+         <!-- REPLACE with these two cards — also change stats-grid to 5 columns -->
+          <div class="stat-card subject-stat">
+            <div class="stat-label">Active Subject</div>
+            <div class="stat-value" id="countSubject" style="font-size:22px;font-style:normal;margin-top:4px;">All</div>
+            <div class="stat-sub" id="subjectAttRate">—</div>
+          </div>
+          <div class="stat-card" style="border-top-color:#0e7490;">
+            <div class="stat-label">Total Students</div>
+            <div class="stat-value" id="countStudents">—</div>
+            <div class="stat-sub">Registered in system</div>
+          </div>
     </div>
 
     <!-- Filter bar -->
@@ -540,20 +549,31 @@
     }
 
     // ── Load data ─────────────────────────────────────────────────
-    async function loadData() {
-      try {
-        const params = new URLSearchParams({ range: currentRange, subject: currentSubject });
-        const res    = await fetch(`/api/full_records?${params}`, { headers: authHeaders() });
-        if (res.status === 401) { logout(); return; }
-        if (!res.ok) throw new Error("Server error");
+    
+  async function loadData() {
+     try {
+      const params = new URLSearchParams({ range: currentRange, subject: currentSubject });
+      const [recordsRes, statusRes] = await Promise.all([
+        fetch(`/api/full_records?${params}`, { headers: authHeaders() }),
+        fetch(`/api/status`, { headers: authHeaders() })
+    ]);
 
-        allRecords = await res.json();
-        updateStats();
-        applyFilters();
-      } catch(err) {
-        console.error("Error loading data:", err);
-      }
+    if (recordsRes.status === 401) { logout(); return; }
+    if (!recordsRes.ok) throw new Error("Server error");
+
+    allRecords = await recordsRes.json();
+
+    if (statusRes.ok) {
+      const status = await statusRes.json();
+      document.getElementById("countStudents").textContent = status.total_students;
     }
+
+    updateStats();
+    applyFilters();
+  } catch(err) {
+    console.error("Error loading data:", err);
+  }
+}
 
     // ── Manual override toggle ────────────────────────────────────
     async function toggleRecord(recordId) {
