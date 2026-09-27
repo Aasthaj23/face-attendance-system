@@ -9,11 +9,11 @@ def detect(client, headers, name="Attendance Student", subject="Mathematics"):
 def test_first_attendance_is_created(client, api_headers):
     response = detect(client, api_headers)
     assert response.status_code == 200
-    assert response.json["status"] == "present"
+    assert response.json["status"] in {"present", "late"}
 
 
 def test_same_student_subject_date_is_duplicate(client, api_headers):
-    assert detect(client, api_headers).json["status"] == "present"
+    assert detect(client, api_headers).json["status"] in {"present", "late"}
     response = detect(client, api_headers)
     assert response.status_code == 200
     assert response.json["status"] == "duplicate"

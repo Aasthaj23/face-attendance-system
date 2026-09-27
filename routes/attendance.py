@@ -4,8 +4,7 @@ from flask import Blueprint, jsonify, request, send_file
 from sqlalchemy.exc import IntegrityError
 
 from models import Attendance, Student, Subject, db
-from models.student import load_students
-from services.attendance_service import already_marked, date_range_filter
+from services.attendance_service import already_marked, date_range_filter, determine_status
 from services.export_service import attendance_csv
 from utils.security import authorized, photo_token
 from utils.logger import get_logger
@@ -100,7 +99,7 @@ def toggle_record(record_id):
         except ValidationError as error:
             return jsonify({"error": str(error)}), 400
     else:
-        record.status = "absent" if record.status == "present" else "present"
+        record.status = "present" if record.status == "absent" else "absent"
     db.session.commit()
     return jsonify({"id": record.id, "status": record.status})
 
@@ -151,7 +150,8 @@ def api_detect():
         logger.warning("Duplicate attendance: %s, %s, %s", student.name, subject.name, today)
         return jsonify({"status": "duplicate", "message": f"{student.name} already marked for {subject.name} today"})
     timestamp = datetime.now()
-    record = Attendance(student=student, subject=subject, date=today, timestamp=timestamp, status="present")
+    status = determine_status(timestamp)
+    record = Attendance(student=student, subject=subject, date=today, timestamp=timestamp, status=status)
     db.session.add(record)
     try:
         db.session.commit()
@@ -159,8 +159,8 @@ def api_detect():
         db.session.rollback()
         logger.warning("Duplicate attendance: %s, %s, %s", student.name, subject.name, today)
         return jsonify({"status": "duplicate", "message": f"{student.name} already marked for {subject.name} today"})
-    logger.info("Attendance recorded: %s, %s, present", student.name, subject.name)
-    return jsonify({"status": "present", "name": student.name, "roll_no": student.roll_no, "id": record.id})
+    logger.info("Attendance recorded: %s, %s, %s", student.name, subject.name, status)
+    return jsonify({"status": status, "name": student.name, "roll_no": student.roll_no, "id": record.id})
 
 
 @attendance_bp.post("/api/mark_absent")
@@ -176,8 +176,7 @@ def mark_absent():
     present_names = {name.lower() for name in data.get("present_names", [])}
     today = datetime.now().date()
     marked_absent = []
-    for item in load_students():
-        student = get_student(item["name"], item["roll_no"])
+    for student in Student.query.all():
         if student.name.lower() in present_names or already_marked(student.id, subject.id, today):
             continue
         db.session.add(Attendance(student=student, subject=subject, date=today, timestamp=datetime.now(), status="absent"))

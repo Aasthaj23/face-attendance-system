@@ -1,11 +1,8 @@
-from datetime import datetime
-
 import numpy as np
 from flask import Blueprint, jsonify, request
 
 from config import KNOWN_DIR
 from models import Student, db
-from models.student import find_student, load_students, save_students
 from services.face_service import (
     FACE_RECOGNITION_AVAILABLE,
     face_recognition,
@@ -39,8 +36,7 @@ def register_face():
         return jsonify({"error": "Name and roll number are required"}), 400
     if not photos:
         return jsonify({"error": "At least one photo is required"}), 400
-    students = load_students()
-    if find_student(students, roll_no=roll_no):
+    if Student.query.filter_by(roll_no=roll_no).first():
         return jsonify({"error": f"Roll number {roll_no} already registered"}), 409
 
     saved_filename = None
@@ -57,10 +53,8 @@ def register_face():
     if not saved_filename:
         return jsonify({"error": "No usable face found in any photo - try better lighting"}), 400
 
-    students.append({"name": name, "roll_no": roll_no, "filename": saved_filename, "added_on": datetime.now().isoformat()})
     db.session.add(Student(name=name, roll_no=roll_no, photo_path=saved_filename))
     db.session.commit()
-    save_students(students)
     load_known_faces()
     logger.info("Student registered: %s (%s)", name, roll_no)
     return jsonify({"message": f"{name} registered successfully", "roll_no": roll_no, "filename": saved_filename, "photo_token": photo_token(roll_no), "known_count": len(known_names)})

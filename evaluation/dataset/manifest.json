@@ -1,0 +1,12 @@
+[
+  {"path": "known/Aastha/general.jpg", "expected": "Aastha Jain", "condition": "general"},
+  {"path": "known/Dipali/general.jpg", "expected": "Dipali Deore", "condition": "general"},
+  {"path": "known/Madhuri/general.jpg", "expected": "Madhuri Munde", "condition": "general"},
+  {"path": "known/Prajakta/general.jpg", "expected": "Prajakta Jadhav", "condition": "general"},
+  {"path": "known/Sakshi/general.jpg", "expected": "Sakshi Patil", "condition": "general"},
+  {"path": "known/Samiksha/general.jpg", "expected": "Samiksha", "condition": "general"},
+  {"path": "known/Sanjana/general.jpg", "expected": "Sanjana Rajoba", "condition": "general"},
+  {"path": "known/Srushti/general.jpg", "expected": "Srushti Kamble", "condition": "general"},
+  {"path": "known/Suvarna/general.jpg", "expected": "Suvarna Khindikar", "condition": "general"},
+  {"path": "known/Swapnali/general.jpg", "expected": "Swapnali Rathod", "condition": "general"}
+]

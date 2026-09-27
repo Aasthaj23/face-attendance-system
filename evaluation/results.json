@@ -1,21 +1,116 @@
 {
-  "generated_at": "2026-09-27T04:19:41.132483+00:00",
+  "generated_at": "2026-09-27T05:35:33.366392+00:00",
   "threshold": 0.5,
   "gallery_directory": "E:\\Internship project\\Face Attendance\\Known",
   "gallery_faces": 10,
   "metrics": {
-    "total_samples": 0,
-    "known_samples": 0,
+    "total_samples": 10,
+    "known_samples": 10,
     "unknown_samples": 0,
     "errored_samples": 0,
-    "accuracy": 0.0,
-    "precision": 0.0,
-    "recall": 0.0,
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
     "false_acceptance_rate": 0.0,
     "false_rejection_rate": 0.0,
-    "true_positive": 0,
+    "true_positive": 10,
     "false_positive": 0
   },
-  "by_condition": {},
-  "samples": []
+  "by_condition": {
+    "general": {
+      "total_samples": 10,
+      "known_samples": 10,
+      "unknown_samples": 0,
+      "errored_samples": 0,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "false_acceptance_rate": 0.0,
+      "false_rejection_rate": 0.0,
+      "true_positive": 10,
+      "false_positive": 0
+    }
+  },
+  "samples": [
+    {
+      "path": "known/Aastha/general.jpg",
+      "expected": "Aastha Jain",
+      "condition": "general",
+      "predicted": "Aastha Jain",
+      "distance": 0.0,
+      "error": null
+    },
+    {
+      "path": "known/Dipali/general.jpg",
+      "expected": "Dipali Deore",
+      "condition": "general",
+      "predicted": "Dipali Deore",
+      "distance": 0.0,
+      "error": null
+    },
+    {
+      "path": "known/Madhuri/general.jpg",
+      "expected": "Madhuri Munde",
+      "condition": "general",
+      "predicted": "Madhuri Munde",
+      "distance": 0.0,
+      "error": null
+    },
+    {
+      "path": "known/Prajakta/general.jpg",
+      "expected": "Prajakta Jadhav",
+      "condition": "general",
+      "predicted": "Prajakta Jadhav",
+      "distance": 0.0,
+      "error": null
+    },
+    {
+      "path": "known/Sakshi/general.jpg",
+      "expected": "Sakshi Patil",
+      "condition": "general",
+      "predicted": "Sakshi Patil",
+      "distance": 0.0,
+      "error": null
+    },
+    {
+      "path": "known/Samiksha/general.jpg",
+      "expected": "Samiksha",
+      "condition": "general",
+      "predicted": "Samiksha",
+      "distance": 0.0,
+      "error": null
+    },
+    {
+      "path": "known/Sanjana/general.jpg",
+      "expected": "Sanjana Rajoba",
+      "condition": "general",
+      "predicted": "Sanjana Rajoba",
+      "distance": 0.0,
+      "error": null
+    },
+    {
+      "path": "known/Srushti/general.jpg",
+      "expected": "Srushti Kamble",
+      "condition": "general",
+      "predicted": "Srushti Kamble",
+      "distance": 0.0,
+      "error": null
+    },
+    {
+      "path": "known/Suvarna/general.jpg",
+      "expected": "Suvarna Khindikar",
+      "condition": "general",
+      "predicted": "Suvarna Khindikar",
+      "distance": 0.0,
+      "error": null
+    },
+    {
+      "path": "known/Swapnali/general.jpg",
+      "expected": "Swapnali Rathod",
+      "condition": "general",
+      "predicted": "Swapnali Rathod",
+      "distance": 0.0,
+      "error": null
+    }
+  ]
 }

@@ -1,5 +1,10 @@
 import base64
 import io
+import os
+
+os.environ.setdefault("JWT_SECRET_KEY", "test-jwt-secret-0123456789-abcdefgh")
+os.environ.setdefault("API_KEY", "test-api-key-0123456789-abcdefghijk")
+os.environ.setdefault("PHOTO_SECRET", "test-photo-secret-0123456789-abcdef")
 
 import pytest
 from PIL import Image
@@ -13,13 +18,10 @@ from services import face_service
 
 @pytest.fixture
 def app(tmp_path, monkeypatch):
-    students_file = tmp_path / "students.json"
-    students_file.write_text("[]", encoding="utf-8")
+    monkeypatch.setenv("ADMIN_PASSWORD", "1234")
     known_dir = tmp_path / "Known"
     known_dir.mkdir()
 
-    monkeypatch.setattr("models.student.STUDENTS_FILE", students_file)
-    monkeypatch.setattr("config.STUDENTS_FILE", students_file)
     monkeypatch.setattr("config.KNOWN_DIR", known_dir)
     monkeypatch.setattr(students_route, "KNOWN_DIR", known_dir)
     monkeypatch.setattr(face_service, "KNOWN_DIR", known_dir)
@@ -28,7 +30,7 @@ def app(tmp_path, monkeypatch):
     test_app = create_app({
         "TESTING": True,
         "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
-        "JWT_SECRET_KEY": "test-secret",
+        "JWT_SECRET_KEY": "test-jwt-secret-0123456789-abcdefgh",
         "API_KEY": Config.API_KEY,
     })
     yield test_app
