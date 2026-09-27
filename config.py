@@ -7,6 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent
 KNOWN_DIR = BASE_DIR / "Known"
 STUDENTS_FILE = BASE_DIR / "students.json"
 ATTENDANCE_THRESHOLD = 75
+RECOGNITION_THRESHOLD = float(os.environ.get("RECOGNITION_THRESHOLD", "0.50"))
 SUBJECTS = [
     "Mathematics",
     "Physics",
@@ -18,6 +19,7 @@ SUBJECTS = [
 
 
 class Config:
+    RECOGNITION_THRESHOLD = RECOGNITION_THRESHOLD
     JWT_SECRET_KEY = os.environ.get(
         "JWT_SECRET_KEY",
         "4cf445c9cf0a1de286c0b537e5dfcf1d8eeaff8a02380532c1e041c15127bc24",

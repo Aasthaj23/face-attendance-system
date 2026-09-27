@@ -3,6 +3,10 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-from .attendance import AttendanceRecord
+from .student import Student
+from .subject import Subject
+from .attendance import Attendance
 
-__all__ = ["db", "AttendanceRecord"]
+AttendanceRecord = Attendance
+
+__all__ = ["db", "Student", "Subject", "Attendance", "AttendanceRecord"]

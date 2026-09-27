@@ -65,6 +65,19 @@
     .threshold-banner.visible { display: flex; }
     .threshold-banner strong { font-weight: 600; }
 
+    /* ── Attendance focus ── */
+    .focus-panel { background: white; border: 1.5px solid var(--line); border-radius: 12px; padding: 20px 24px; margin-bottom: 28px; animation: fadeUp 0.5s ease 0.08s both; }
+    .focus-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 16px; }
+    .focus-title { font-family: 'DM Serif Display', serif; font-size: 22px; font-style: italic; }
+    .focus-meta { font-size: 11px; color: var(--muted); }
+    .focus-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px 24px; }
+    .focus-row { display: grid; grid-template-columns: minmax(90px, 1fr) 1.5fr 38px; align-items: center; gap: 10px; font-size: 12px; }
+    .focus-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .focus-track { height: 7px; background: #f3eee6; border-radius: 5px; overflow: hidden; }
+    .focus-fill { height: 100%; background: var(--danger-fg); border-radius: 5px; }
+    .focus-pct { color: var(--danger-fg); text-align: right; font-weight: 600; }
+    .focus-empty { color: var(--muted); font-size: 13px; }
+
     /* ── Search ── */
     .toolbar { margin-bottom: 24px; animation: fadeUp 0.5s ease 0.1s both; }
     .search-wrap { position: relative; max-width: 320px; }
@@ -260,6 +273,14 @@
       <span id="bannerText"></span>
     </div>
 
+    <section class="focus-panel" aria-label="Students below attendance threshold">
+      <div class="focus-heading">
+        <h2 class="focus-title">Students below threshold</h2>
+        <span class="focus-meta">Priority follow-up list</span>
+      </div>
+      <div class="focus-list" id="focusList"><span class="focus-empty">Loading attendance focus...</span></div>
+    </section>
+
     <!-- Search -->
     <div class="toolbar">
       <div class="search-wrap">
@@ -324,6 +345,23 @@
       } else {
         banner.classList.remove("visible");
       }
+
+      renderFocusList(list);
+    }
+
+    function renderFocusList(list) {
+      const atRisk = list.filter(s => s.below_threshold).sort((a, b) => a.attendance_pct - b.attendance_pct);
+      const target = document.getElementById("focusList");
+      if (!atRisk.length) {
+        target.innerHTML = '<span class="focus-empty">No students are currently below the 75% threshold.</span>';
+        return;
+      }
+      target.innerHTML = atRisk.slice(0, 8).map(s => `
+        <div class="focus-row">
+          <span class="focus-name">${s.name}</span>
+          <div class="focus-track"><div class="focus-fill" style="width:${Math.min(100, s.attendance_pct || 0)}%"></div></div>
+          <span class="focus-pct">${s.attendance_pct || 0}%</span>
+        </div>`).join("");
     }
 
     function renderStudents(list) {

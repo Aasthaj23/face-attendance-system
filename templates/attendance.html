@@ -85,6 +85,27 @@
     .stat-value { font-family: 'DM Serif Display', serif; font-size: 36px; line-height: 1; color: var(--ink); font-style: italic; }
     .stat-sub   { font-size: 12px; color: var(--muted); margin-top: 6px; font-weight: 300; }
 
+    /* ── Analytics ── */
+    .analytics-grid { display: grid; grid-template-columns: 1.25fr 1fr; gap: 16px; margin-bottom: 28px; }
+    .analytics-card { background: white; border: 1.5px solid var(--line); border-radius: 12px; padding: 20px 24px; min-height: 220px; }
+    .analytics-card.wide { grid-column: 1 / -1; }
+    .analytics-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+    .analytics-title { font-family: 'DM Serif Display', serif; font-size: 22px; font-style: italic; }
+    .analytics-meta { font-size: 11px; color: var(--muted); }
+    .bar-chart { display: flex; align-items: end; gap: 10px; height: 142px; padding: 8px 0 0; border-bottom: 1px solid var(--line); }
+    .bar-item { flex: 1; min-width: 0; height: 100%; display: flex; flex-direction: column; justify-content: end; align-items: center; gap: 7px; }
+    .bar-value { font-size: 10px; color: var(--muted); }
+    .bar-track { width: min(32px, 72%); height: 100%; display: flex; align-items: end; background: #f3eee6; border-radius: 5px 5px 0 0; overflow: hidden; }
+    .bar-fill { width: 100%; min-height: 3px; background: var(--present-fg); border-radius: 5px 5px 0 0; transition: height .45s ease; }
+    .bar-label { width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center; font-size: 10px; color: var(--muted); }
+    .risk-list { display: grid; gap: 10px; }
+    .risk-row { display: grid; grid-template-columns: minmax(100px, 1fr) 1.5fr 42px; align-items: center; gap: 10px; font-size: 12px; }
+    .risk-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .risk-track { height: 7px; background: #f3eee6; border-radius: 5px; overflow: hidden; }
+    .risk-fill { height: 100%; background: var(--warn-fg); border-radius: 5px; }
+    .risk-pct { text-align: right; color: var(--warn-fg); font-weight: 600; }
+    .analytics-empty { color: var(--muted); font-size: 13px; padding: 34px 0; text-align: center; }
+
     /* ── Filter bar ── */
     .filter-bar {
       background: white; border: 1.5px solid var(--line); border-radius: 12px;
@@ -213,6 +234,7 @@
     .empty-state { padding: 60px 24px; text-align: center; display: none; }
     .empty-state svg { width: 40px; height: 40px; fill: none; stroke: var(--line); stroke-width: 1.2; margin-bottom: 12px; }
     .empty-state p { font-size: 14px; color: var(--muted); }
+    @media (max-width: 760px) { .analytics-grid { grid-template-columns: 1fr; } .analytics-card.wide { grid-column: auto; } .stats-grid { grid-template-columns: repeat(2, 1fr); } }
 
     /* ── Modal ── */
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 999; }
@@ -335,19 +357,19 @@
     <!-- Stats -->
     <div class="stats-grid">
       <div class="stat-card total">
-        <div class="stat-label">Total Records</div>
+          <div class="stat-label">Total Students</div>
         <div class="stat-value" id="countTotal">—</div>
-        <div class="stat-sub" id="statRangeLabel">All time entries</div>
+        <div class="stat-sub">Registered in system</div>
       </div>
       <div class="stat-card present">
         <div class="stat-label">Present</div>
         <div class="stat-value" id="countPresent">—</div>
-        <div class="stat-sub">Marked by camera</div>
+        <div class="stat-sub">Present today</div>
       </div>
       <div class="stat-card absent">
         <div class="stat-label">Absent</div>
         <div class="stat-value" id="countAbsent">—</div>
-        <div class="stat-sub">Not checked in</div>
+        <div class="stat-sub">Not present today</div>
       </div>
          <!-- REPLACE with these two cards — also change stats-grid to 5 columns -->
           <div class="stat-card subject-stat">
@@ -356,11 +378,26 @@
             <div class="stat-sub" id="subjectAttRate">—</div>
           </div>
           <div class="stat-card" style="border-top-color:#0e7490;">
-            <div class="stat-label">Total Students</div>
-            <div class="stat-value" id="countStudents">—</div>
-            <div class="stat-sub">Registered in system</div>
+            <div class="stat-label">Overall Attendance</div>
+            <div class="stat-value" id="countOverall">—</div>
+            <div class="stat-sub">Present or late today</div>
           </div>
     </div>
+
+    <section class="analytics-grid" aria-label="Attendance analytics">
+      <div class="analytics-card">
+        <div class="analytics-heading"><h2 class="analytics-title">Monthly attendance</h2><span class="analytics-meta" id="monthlyMeta">Current year</span></div>
+        <div class="bar-chart" id="monthlyChart"><div class="analytics-empty">Loading monthly data...</div></div>
+      </div>
+      <div class="analytics-card">
+        <div class="analytics-heading"><h2 class="analytics-title">Subject-wise attendance</h2><span class="analytics-meta">All records</span></div>
+        <div class="bar-chart" id="subjectChart"><div class="analytics-empty">Loading subject data...</div></div>
+      </div>
+      <div class="analytics-card wide">
+        <div class="analytics-heading"><h2 class="analytics-title">Students below threshold</h2><span class="analytics-meta">Below 75%</span></div>
+        <div class="risk-list" id="riskList"><div class="analytics-empty">Loading student data...</div></div>
+      </div>
+    </section>
 
     <!-- Filter bar -->
     <div class="filter-bar">
@@ -522,9 +559,6 @@
     function updateStats() {
       const present = allRecords.filter(s => s.status === "present").length;
       const absent  = allRecords.filter(s => s.status === "absent").length;
-      document.getElementById("countTotal").textContent   = allRecords.length;
-      document.getElementById("countPresent").textContent = present;
-      document.getElementById("countAbsent").textContent  = absent;
       document.getElementById("totalCount").textContent   = allRecords.length;
 
       // Subject stat
@@ -535,7 +569,44 @@
 
       // Range label
       const rangeLabels = { day: "Today's entries", week: "Last 7 days", month: "Last 30 days", all: "All time entries" };
-      document.getElementById("statRangeLabel").textContent = rangeLabels[currentRange] || "All time entries";
+    }
+
+    function renderBarChart(targetId, items, emptyText) {
+      const target = document.getElementById(targetId);
+      if (!items.length) { target.innerHTML = `<div class="analytics-empty">${emptyText}</div>`; return; }
+      target.innerHTML = items.map(item => `<div class="bar-item" title="${item.label}: ${item.value}%"><span class="bar-value">${item.value}%</span><div class="bar-track"><div class="bar-fill" style="height:${Math.max(3, item.value)}%;background:${item.color || 'var(--present-fg)'}"></div></div><span class="bar-label">${item.label}</span></div>`).join("");
+    }
+
+    function renderRiskList(students) {
+      const atRisk = students.filter(s => s.below_threshold).sort((a, b) => a.attendance_pct - b.attendance_pct);
+      const target = document.getElementById("riskList");
+      if (!atRisk.length) { target.innerHTML = `<div class="analytics-empty">No students below the attendance threshold.</div>`; return; }
+      target.innerHTML = atRisk.slice(0, 8).map(s => `<div class="risk-row"><span class="risk-name">${s.name}</span><div class="risk-track"><div class="risk-fill" style="width:${Math.min(100, s.attendance_pct || 0)}%"></div></div><span class="risk-pct">${s.attendance_pct || 0}%</span></div>`).join("");
+    }
+
+    async function loadAnalytics() {
+      try {
+        const [overviewRes, monthlyRes, recordsRes, studentsRes] = await Promise.all([
+          fetch("/api/analytics/overview", { headers: authHeaders() }),
+          fetch(`/api/analytics/monthly?year=${new Date().getFullYear()}`, { headers: authHeaders() }),
+          fetch("/api/full_records?range=all&subject=all", { headers: authHeaders() }),
+          fetch("/api/students", { headers: authHeaders() })
+        ]);
+        if (overviewRes.status === 401) { logout(); return; }
+        const overview = await overviewRes.json();
+        document.getElementById("countTotal").textContent = overview.total_students;
+        document.getElementById("countPresent").textContent = overview.present_today;
+        document.getElementById("countAbsent").textContent = overview.absent_today;
+        document.getElementById("countOverall").textContent = `${overview.overall_percentage}%`;
+        const monthly = await monthlyRes.json();
+        document.getElementById("monthlyMeta").textContent = monthly.year;
+        renderBarChart("monthlyChart", monthly.months.map(m => ({ label: m.month.slice(5), value: m.attendance_percentage })), "No monthly attendance data.");
+        const records = await recordsRes.json();
+        const subjects = {};
+        records.forEach(r => { if (!subjects[r.subject]) subjects[r.subject] = { attended: 0, total: 0 }; subjects[r.subject].total++; if (r.status === "present" || r.status === "late") subjects[r.subject].attended++; });
+        renderBarChart("subjectChart", Object.entries(subjects).map(([label, value]) => ({ label, value: value.total ? Math.round(value.attended / value.total * 100) : 0, color: '#2d6a8a' })), "No subject attendance data.");
+        renderRiskList(await studentsRes.json());
+      } catch (error) { console.error("Analytics failed:", error); }
     }
 
     function applyFilters() {
@@ -565,7 +636,7 @@
 
     if (statusRes.ok) {
       const status = await statusRes.json();
-      document.getElementById("countStudents").textContent = status.total_students;
+      document.getElementById("countTotal").textContent = status.total_students;
     }
 
     updateStats();
@@ -608,16 +679,14 @@
     async function exportCSV() {
       try {
         const params = new URLSearchParams({ range: currentRange, subject: currentSubject });
-        const res    = await fetch(`/api/full_records?${params}`, { headers: authHeaders() });
+        const res    = await fetch(`/api/attendance/export?${params}`, { headers: authHeaders() });
         if (res.status === 401) { logout(); return; }
-        const data   = await res.json();
-        let csv = "Name,Roll No,Subject,Date,Time,Status\n";
-        data.forEach(r => { csv += `${r.name},${r.roll_no},${r.subject},${r.date},${r.time},${r.status}\n`; });
-        const blob = new Blob([csv], { type: "text/csv" });
+        if (!res.ok) throw new Error("Export failed");
+        const blob = await res.blob();
         const url  = URL.createObjectURL(blob);
         const a    = document.createElement("a");
         a.href     = url;
-        a.download = `attendance_${currentRange}_${new Date().toISOString().slice(0,10)}.csv`;
+        a.download = "attendance.csv";
         a.click();
         URL.revokeObjectURL(url);
       } catch(err) { console.error("Export failed:", err); }
@@ -653,7 +722,8 @@
     // ── Init ──────────────────────────────────────────────────────
     loadSubjects();
     loadData();
-    setInterval(loadData, 5000);
+    loadAnalytics();
+    setInterval(() => { loadData(); loadAnalytics(); }, 5000);
   </script>
 </body>
 </html>

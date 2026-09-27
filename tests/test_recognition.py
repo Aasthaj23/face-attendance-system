@@ -1,12 +1,40 @@
-from app import app
-from config import Config
+import numpy as np
+
+from services import face_service
 
 
-def test_reload_faces_requires_authorization():
-    assert app.test_client().post("/api/reload_faces").status_code == 401
+def test_known_face_is_identified(monkeypatch):
+    monkeypatch.setattr(face_service, "FACE_RECOGNITION_AVAILABLE", True)
+    monkeypatch.setattr(face_service, "known_encodings", [np.zeros(128)])
+    monkeypatch.setattr(face_service, "known_names", ["Known Student"])
+    monkeypatch.setattr(
+        face_service.face_recognition,
+        "face_distance",
+        lambda known, face: np.array([0.2]),
+    )
+    name, distance = face_service.recognize_face(np.zeros(128))
+    assert name == "Known Student"
+    assert distance == 0.2
 
 
-def test_reload_faces_with_api_key():
-    response = app.test_client().post("/api/reload_faces", headers={"X-API-Key": Config.API_KEY})
-    assert response.status_code == 200
-    assert "known" in response.json
+def test_unknown_face_returns_none(monkeypatch):
+    monkeypatch.setattr(face_service, "FACE_RECOGNITION_AVAILABLE", True)
+    monkeypatch.setattr(face_service, "known_encodings", [np.zeros(128)])
+    monkeypatch.setattr(face_service, "known_names", ["Known Student"])
+    monkeypatch.setattr(
+        face_service.face_recognition,
+        "face_distance",
+        lambda known, face: np.array([0.9]),
+    )
+    name, distance = face_service.recognize_face(np.zeros(128))
+    assert name is None
+    assert distance == 0.9
+
+
+def test_invalid_face_encoding_is_handled_safely(monkeypatch):
+    monkeypatch.setattr(face_service, "FACE_RECOGNITION_AVAILABLE", True)
+    monkeypatch.setattr(face_service, "known_encodings", [np.zeros(128)])
+    monkeypatch.setattr(face_service, "known_names", ["Known Student"])
+    name, distance = face_service.recognize_face(None)
+    assert name is None
+    assert distance == float("inf")

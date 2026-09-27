@@ -3,7 +3,8 @@ import os
 import numpy as np
 from PIL import Image
 
-from config import KNOWN_DIR
+from config import KNOWN_DIR, RECOGNITION_THRESHOLD
+from utils.logger import get_logger
 
 try:
     import face_recognition
@@ -14,6 +15,7 @@ except ImportError:
 FACE_RECOGNITION_AVAILABLE = face_recognition is not None
 known_encodings: list = []
 known_names: list = []
+logger = get_logger(__name__)
 
 
 def load_known_faces() -> None:
@@ -34,15 +36,37 @@ def load_known_faces() -> None:
                 known_encodings.append(encodings[0])
                 known_names.append(name)
         except Exception as error:
-            print(f"[faces] Error loading {filename}: {error}")
-    print(f"[faces] {len(known_names)} loaded")
+            logger.error("Face encoding failed for %s: %s", filename, error)
+    logger.info("Loaded %d known faces", len(known_names))
 
 
 def has_face(image: Image.Image) -> bool:
-    return bool(
-        FACE_RECOGNITION_AVAILABLE
-        and face_recognition.face_encodings(np.array(image, dtype=np.uint8))
-    )
+    if not FACE_RECOGNITION_AVAILABLE:
+        return False
+    try:
+        return bool(face_recognition.face_encodings(np.array(image, dtype=np.uint8)))
+    except (TypeError, ValueError):
+        return False
+
+
+def recognize_face(face_encoding):
+    """Return the closest known name and distance, or an unknown result."""
+    if not FACE_RECOGNITION_AVAILABLE or not known_encodings:
+        return None, float("inf")
+
+    try:
+        distances = face_recognition.face_distance(known_encodings, face_encoding)
+        best_index = int(np.argmin(distances))
+        best_distance = float(distances[best_index])
+    except (TypeError, ValueError):
+        return None, float("inf")
+
+    if best_distance <= RECOGNITION_THRESHOLD:
+        logger.info("Face recognized: %s (distance=%.4f)", known_names[best_index], best_distance)
+        return known_names[best_index], best_distance
+
+    logger.warning("Unknown face (distance=%.4f)", best_distance)
+    return None, best_distance
 
 
 load_known_faces()

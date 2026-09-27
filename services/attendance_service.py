@@ -1,29 +1,24 @@
 from datetime import datetime, timedelta
 
 from config import ATTENDANCE_THRESHOLD
-from models import AttendanceRecord
+from models import Attendance
 from utils.security import photo_token
 
 
-def already_marked(roll_no: str, name: str, subject: str, today: str) -> bool:
-    query = AttendanceRecord.query.filter(
-        AttendanceRecord.timestamp.startswith(today),
-        AttendanceRecord.subject == subject,
-    )
-    query = query.filter(AttendanceRecord.roll_no == roll_no) if roll_no else query.filter(
-        AttendanceRecord.name == name
-    )
-    return query.first() is not None
+def already_marked(student_id: int, subject_id: int, today) -> bool:
+    return Attendance.query.filter_by(
+        student_id=student_id, subject_id=subject_id, date=today
+    ).first() is not None
 
 
 def date_range_filter(query, range_type: str):
-    now = datetime.now()
+    today = datetime.now().date()
     if range_type == "day":
-        return query.filter(AttendanceRecord.timestamp.startswith(now.strftime("%Y-%m-%d")))
+        return query.filter(Attendance.date == today)
     if range_type == "week":
-        return query.filter(AttendanceRecord.timestamp >= (now - timedelta(days=7)).strftime("%Y-%m-%d"))
+        return query.filter(Attendance.date >= today - timedelta(days=7))
     if range_type == "month":
-        return query.filter(AttendanceRecord.timestamp >= (now - timedelta(days=30)).strftime("%Y-%m-%d"))
+        return query.filter(Attendance.date >= today - timedelta(days=30))
     return query
 
 
@@ -31,9 +26,10 @@ def attendance_stats(student: dict, all_records: list) -> dict:
     roll = student["roll_no"]
     name = student["name"].lower()
     records = [
-        record
-        for record in all_records
-        if (record.roll_no and record.roll_no == roll) or record.name.lower() == name
+        record for record in all_records
+        if record.student and (
+            record.student.roll_no == roll or record.student.name.lower() == name
+        )
     ]
     total = len(records)
     present = sum(1 for record in records if record.status == "present")
