@@ -1,0 +1,15 @@
+services:
+  web:
+    build:
+      context: .
+    container_name: face-attendance
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    volumes:
+      - ./instance:/app/instance
+      - ./Known:/app/Known
+      - ./Unknown:/app/Unknown
+    restart: unless-stopped
+
