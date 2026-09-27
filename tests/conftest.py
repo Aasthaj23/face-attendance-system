@@ -7,7 +7,6 @@ from PIL import Image
 from app import create_app
 from config_testing import TestingConfig
 from models import User, db
-from routes import students as students_route
 from services import face_service
 
 
@@ -17,9 +16,7 @@ def app(tmp_path, monkeypatch):
     known_dir.mkdir()
 
     monkeypatch.setattr("config.KNOWN_DIR", known_dir)
-    monkeypatch.setattr(students_route, "KNOWN_DIR", known_dir)
     monkeypatch.setattr(face_service, "KNOWN_DIR", known_dir)
-    monkeypatch.setattr(students_route, "FACE_RECOGNITION_AVAILABLE", False)
 
     test_app = create_app(vars(TestingConfig))
     with test_app.app_context():

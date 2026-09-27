@@ -5,6 +5,7 @@ from flask import Blueprint, jsonify, request
 
 from models import Attendance, Student, Subject
 from utils.security import authorized
+from utils.auth import require_role, require_student_access
 
 
 analytics_bp = Blueprint("analytics", __name__)
@@ -23,9 +24,8 @@ def _percentage(present: int, total: int) -> int:
 
 
 @analytics_bp.get("/api/analytics/overview")
+@require_role("ADMIN", "TEACHER")
 def overview():
-    if not authorized():
-        return jsonify({"error": "Unauthorized"}), 401
 
     today = date.today()
     records = Attendance.query.filter(Attendance.date == today).all()
@@ -45,9 +45,8 @@ def overview():
 
 
 @analytics_bp.get("/api/analytics/student/<int:student_id>")
+@require_student_access()
 def student_analytics(student_id):
-    if not authorized():
-        return jsonify({"error": "Unauthorized"}), 401
     student = Student.query.session.get(Student, student_id)
     if not student:
         return jsonify({"error": "Student not found"}), 404
@@ -67,9 +66,8 @@ def student_analytics(student_id):
 
 
 @analytics_bp.get("/api/analytics/subject/<int:subject_id>")
+@require_role("ADMIN", "TEACHER")
 def subject_analytics(subject_id):
-    if not authorized():
-        return jsonify({"error": "Unauthorized"}), 401
     subject = Subject.query.session.get(Subject, subject_id)
     if not subject:
         return jsonify({"error": "Subject not found"}), 404
@@ -88,9 +86,8 @@ def subject_analytics(subject_id):
 
 
 @analytics_bp.get("/api/analytics/monthly")
+@require_role("ADMIN", "TEACHER")
 def monthly_analytics():
-    if not authorized():
-        return jsonify({"error": "Unauthorized"}), 401
     year = request.args.get("year", str(date.today().year))
     try:
         year = int(year)

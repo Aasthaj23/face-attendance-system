@@ -76,7 +76,7 @@ def has_face(image: Image.Image) -> bool:
 
 
 def recognize_face(face_encoding):
-    """Return the closest known name and distance, or an unknown result."""
+    """Return the owning student_id and distance, or an unknown result."""
     if not FACE_RECOGNITION_AVAILABLE or not known_encodings:
         return None, float("inf")
 
@@ -88,9 +88,12 @@ def recognize_face(face_encoding):
         return None, float("inf")
 
     if best_distance <= RECOGNITION_THRESHOLD:
-        logger.info("Face recognized: %s (distance=%.4f)", known_names[best_index], best_distance)
         student_id = known_student_ids[best_index] if best_index < len(known_student_ids) else None
-        return student_id or known_names[best_index], best_distance
+        if student_id is None:
+            logger.warning("Matched face has no database student_id")
+            return None, best_distance
+        logger.info("Face recognized: student_id=%s (distance=%.4f)", student_id, best_distance)
+        return student_id, best_distance
 
     logger.warning("Unknown face (distance=%.4f)", best_distance)
     return None, best_distance

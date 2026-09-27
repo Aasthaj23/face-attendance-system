@@ -7,6 +7,7 @@ from models import Attendance, Student, Subject, db
 from services.attendance_service import already_marked, date_range_filter, determine_status
 from services.export_service import attendance_csv
 from utils.security import authorized, photo_token
+from utils.auth import require_role
 from utils.logger import get_logger
 from utils.validation import (
     ValidationError,
@@ -44,9 +45,8 @@ def get_student(name: str, roll_no: str = "") -> Student:
 
 
 @attendance_bp.get("/api/attendance/export")
+@require_role("ADMIN", "TEACHER")
 def export_attendance():
-    if not authorized():
-        return jsonify({"error": "Unauthorized"}), 401
     query = date_range_filter(Attendance.query, request.args.get("range", "all"))
     subject_name = request.args.get("subject", "")
     if subject_name and subject_name != "all":
@@ -62,9 +62,8 @@ def export_attendance():
 
 @attendance_bp.get("/api/attendance")
 @attendance_bp.get("/api/full_records")
+@require_role("ADMIN", "TEACHER")
 def full_records():
-    if not authorized():
-        return jsonify({"error": "Unauthorized"}), 401
     query = date_range_filter(Attendance.query, request.args.get("range", "all"))
     subject_name = request.args.get("subject", "")
     if subject_name and subject_name != "all":
@@ -86,9 +85,8 @@ def full_records():
 
 @attendance_bp.patch("/api/attendance/<int:record_id>")
 @attendance_bp.post("/api/records/<int:record_id>/toggle")
+@require_role("ADMIN")
 def toggle_record(record_id):
-    if not authorized():
-        return jsonify({"error": "Unauthorized"}), 401
     record = db.session.get(Attendance, record_id)
     if not record:
         return jsonify({"error": "Record not found"}), 404
@@ -106,9 +104,8 @@ def toggle_record(record_id):
 
 @attendance_bp.post("/api/attendance")
 @attendance_bp.post("/api/records")
+@require_role("ADMIN", "TEACHER")
 def add_record():
-    if not authorized():
-        return jsonify({"error": "Unauthorized"}), 401
     data = request.get_json() or {}
     now = datetime.now()
     try:
@@ -131,9 +128,8 @@ def add_record():
 
 
 @attendance_bp.post("/api/detect")
+@require_role("ADMIN", "TEACHER")
 def api_detect():
-    if not authorized():
-        return jsonify({"error": "Unauthorized"}), 401
     data = request.get_json() or {}
     try:
         name = validate_name(data.get("name"))
@@ -164,9 +160,8 @@ def api_detect():
 
 
 @attendance_bp.post("/api/mark_absent")
+@require_role("ADMIN", "TEACHER")
 def mark_absent():
-    if not authorized():
-        return jsonify({"error": "Unauthorized"}), 401
     data = request.get_json() or {}
     try:
         subject_name = validate_subject(data.get("subject", "General"))

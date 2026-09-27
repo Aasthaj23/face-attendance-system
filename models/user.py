@@ -15,7 +15,9 @@ class User(db.Model):
     username = db.Column(db.String(80), nullable=False, unique=True, index=True)
     password_hash = db.Column(db.String(255), nullable=False)
     role = db.Column(db.String(20), nullable=False, default="STUDENT")
+    student_id = db.Column(db.Integer, db.ForeignKey("student.id"), nullable=True, index=True)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    student = db.relationship("Student", backref="user_account")
 
     def set_password(self, password: str) -> None:
         self.password_hash = generate_password_hash(password)

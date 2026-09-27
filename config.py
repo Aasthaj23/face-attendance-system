@@ -29,7 +29,10 @@ class Config:
     RECOGNITION_THRESHOLD = RECOGNITION_THRESHOLD
     JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "")
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=2)
-    SQLALCHEMY_DATABASE_URI = f"sqlite:///{BASE_DIR / 'instance' / 'attendance.db'}"
+    SQLALCHEMY_DATABASE_URI = os.environ.get(
+        "DATABASE_URL",
+        f"sqlite:///{BASE_DIR / 'instance' / 'attendance.db'}",
+    )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     API_KEY = os.environ.get("API_KEY", "")
     PHOTO_SECRET = os.environ.get("PHOTO_SECRET", "")

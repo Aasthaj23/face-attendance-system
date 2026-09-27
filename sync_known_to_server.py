@@ -3,7 +3,7 @@ import base64
 import requests
 
 FLASK_URL = "http://127.0.0.1:5000"
-API_KEY   = "85ba7587e257e99ac59ad97a3e6c1ebfba1a0318ced994a895d4f9f13b28ce7d"
+API_KEY   = os.environ["API_KEY"]
 KNOWN_DIR = "Known"
 
 headers = {"Content-Type": "application/json", "X-API-Key": API_KEY}

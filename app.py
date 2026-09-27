@@ -6,6 +6,8 @@ from datetime import datetime
 from flask import Flask, jsonify, render_template
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
+from flask_migrate import Migrate
+from sqlalchemy import inspect
 
 from config import ATTENDANCE_THRESHOLD, SUBJECTS, validate_security_config
 from models import Attendance, FaceEmbedding, Student, Subject, User, db
@@ -28,6 +30,7 @@ def create_app(config_overrides=None) -> Flask:
         application.config.update(config_overrides)
     validate_security_config(application.config)
     db.init_app(application)
+    Migrate(application, db)
     JWTManager(application)
     CORS(application)
     application.register_blueprint(auth_bp)
@@ -59,12 +62,8 @@ def create_app(config_overrides=None) -> Flask:
             "threshold": ATTENDANCE_THRESHOLD,
         })
 
-    with application.app_context():
-        db.create_all()
-        embeddings = FaceEmbedding.query.all()
-        if embeddings:
-            load_known_embeddings(embeddings)
-        if User.query.count() == 0 and not application.config.get("TESTING"):
+    def seed_reference_data():
+        if User.query.count() == 0:
             admin_password = os.environ.get("ADMIN_PASSWORD")
             if not admin_password:
                 admin_password = secrets.token_urlsafe(24)
@@ -76,11 +75,26 @@ def create_app(config_overrides=None) -> Flask:
             bootstrap_user.set_role(bootstrap_user.role)
             bootstrap_user.set_password(admin_password)
             db.session.add(bootstrap_user)
-            db.session.commit()
         for subject_name in SUBJECTS:
             if not Subject.query.filter_by(name=subject_name).first():
                 db.session.add(Subject(name=subject_name))
         db.session.commit()
+
+    @application.cli.command("seed-data")
+    def seed_data_command():
+        """Create the initial admin user and configured subjects."""
+        seed_reference_data()
+        logger.info("Reference data seeded")
+
+    if application.config.get("TESTING"):
+        with application.app_context():
+            db.create_all()
+            seed_reference_data()
+    with application.app_context():
+        if inspect(db.engine).has_table("face_embedding"):
+            embeddings = FaceEmbedding.query.all()
+            if embeddings:
+                load_known_embeddings(embeddings)
     return application
 
 
