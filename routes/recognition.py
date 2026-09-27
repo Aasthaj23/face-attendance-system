@@ -2,15 +2,17 @@ import numpy as np
 from flask import Blueprint, jsonify, request
 
 from config import KNOWN_DIR
-from models import Student, db
+from models import FaceEmbedding, Student, db
 from services.face_service import (
     FACE_RECOGNITION_AVAILABLE,
     face_recognition,
     has_face,
     known_names,
-    load_known_faces,
+    load_known_embeddings,
     recognize_face,
+    serialize_embedding,
 )
+from services.liveness_service import LIVENESS_CHALLENGE, LivenessSessionStore
 from utils.security import authorized, photo_token
 from utils.logger import get_logger
 from utils.validation import ValidationError, validate_name, validate_photo, validate_roll_no
@@ -18,6 +20,7 @@ from utils.validation import ValidationError, validate_name, validate_photo, val
 
 recognition_bp = Blueprint("recognition", __name__)
 logger = get_logger(__name__)
+liveness_sessions = LivenessSessionStore()
 
 
 @recognition_bp.post("/api/recognition/register")
@@ -40,22 +43,32 @@ def register_face():
         return jsonify({"error": f"Roll number {roll_no} already registered"}), 409
 
     saved_filename = None
+    valid_embeddings = []
     for photo_data in photos:
         try:
             image = validate_photo(photo_data, has_face if FACE_RECOGNITION_AVAILABLE else None)
-            saved_filename = f"{name}_{roll_no}.jpg"
-            image.save(KNOWN_DIR / saved_filename, "JPEG", quality=95)
-            break
+            if not FACE_RECOGNITION_AVAILABLE:
+                continue
+            image_array = np.array(image, dtype=np.uint8)
+            encodings = face_recognition.face_encodings(image_array)
+            if not encodings:
+                continue
+            valid_embeddings.append(encodings[0])
+            if saved_filename is None:
+                saved_filename = f"{name}_{roll_no}.jpg"
+                image.save(KNOWN_DIR / saved_filename, "JPEG", quality=95)
         except ValidationError as error:
             logger.warning("Photo rejected during face registration: %s", error)
         except Exception as error:
             logger.error("Face encoding failed during registration: %s", error)
-    if not saved_filename:
+    if not saved_filename or not valid_embeddings:
         return jsonify({"error": "No usable face found in any photo - try better lighting"}), 400
 
-    db.session.add(Student(name=name, roll_no=roll_no, photo_path=saved_filename))
+    student = Student(name=name, roll_no=roll_no, photo_path=saved_filename)
+    student.face_embeddings = [FaceEmbedding(embedding=serialize_embedding(embedding)) for embedding in valid_embeddings]
+    db.session.add(student)
     db.session.commit()
-    load_known_faces()
+    load_known_embeddings(FaceEmbedding.query.all())
     logger.info("Student registered: %s (%s)", name, roll_no)
     return jsonify({"message": f"{name} registered successfully", "roll_no": roll_no, "filename": saved_filename, "photo_token": photo_token(roll_no), "known_count": len(known_names)})
 
@@ -68,14 +81,28 @@ def identify_face():
         return jsonify({"error": "Face recognition is unavailable"}), 503
     data = request.get_json() or {}
     try:
-        image = validate_photo(data.get("photo"), has_face)
+        image = validate_photo(data.get("photo"))
     except ValidationError as error:
         return jsonify({"error": str(error)}), 400
     image_array = np.array(image, dtype=np.uint8)
     locations = face_recognition.face_locations(image_array)
+    landmarks = face_recognition.face_landmarks(image_array, locations)
+    if len(locations) != 1 or len(landmarks) != 1:
+        return jsonify({"student": None, "distance": None, "error": "Exactly one face is required"}), 400
+    top, right, bottom, left = locations[0]
+    centroid = ((left + right) / 2.0, (top + bottom) / 2.0)
+    session_id = data.get("session_id") or liveness_sessions.start()
+    if not liveness_sessions.update(session_id, centroid, landmarks[0]):
+        return jsonify({
+            "status": "liveness_required",
+            "challenge": LIVENESS_CHALLENGE,
+            "session_id": session_id,
+            "student": None,
+        }), 202
+
     encodings = face_recognition.face_encodings(image_array, locations)
     if len(encodings) != 1:
-        return jsonify({"student": None, "distance": None, "error": "Exactly one face is required"}), 400
+        return jsonify({"student": None, "distance": None, "error": "Face encoding failed"}), 400
     name, distance = recognize_face(encodings[0])
     student = Student.query.filter(db.func.lower(Student.name) == name.lower()).first() if name else None
     return jsonify({
@@ -93,5 +120,5 @@ def identify_face():
 def api_reload_faces():
     if not authorized():
         return jsonify({"error": "Unauthorized"}), 401
-    load_known_faces()
+    load_known_embeddings(FaceEmbedding.query.all())
     return jsonify({"message": "Reloaded", "known": len(known_names)})

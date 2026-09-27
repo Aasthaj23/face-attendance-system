@@ -18,6 +18,27 @@ known_names: list = []
 logger = get_logger(__name__)
 
 
+def serialize_embedding(embedding) -> bytes:
+    return np.asarray(embedding, dtype=np.float64).tobytes()
+
+
+def deserialize_embedding(value: bytes):
+    return np.frombuffer(value, dtype=np.float64).copy()
+
+
+def load_known_embeddings(records) -> None:
+    if not records:
+        load_known_faces()
+        return
+    known_encodings.clear()
+    known_names.clear()
+    for record in records:
+        if record.student and record.embedding:
+            known_encodings.append(deserialize_embedding(record.embedding))
+            known_names.append(record.student.name)
+    logger.info("Loaded %d database face embeddings", len(known_names))
+
+
 def load_known_faces() -> None:
     known_encodings.clear()
     known_names.clear()

@@ -1,6 +1,7 @@
 """Simple challenge-response liveness checks for the camera client."""
 
 import math
+import uuid
 
 
 LIVENESS_CHALLENGE = "Turn your head slightly left."
@@ -66,3 +67,27 @@ class LivenessTracker:
                 closest = session
                 closest_distance = distance
         return closest
+
+
+class LivenessSessionStore:
+    """Keep short-lived challenge state between recognition API frames."""
+
+    def __init__(self):
+        self._sessions = {}
+
+    def start(self) -> str:
+        session_id = uuid.uuid4().hex
+        self._sessions[session_id] = LivenessTracker()
+        return session_id
+
+    def update(self, session_id: str, centroid, landmarks: dict) -> bool:
+        tracker = self._sessions.get(session_id)
+        if tracker is None:
+            return False
+        live = tracker.update(centroid, landmarks)
+        if live:
+            self._sessions.pop(session_id, None)
+        return live
+
+    def discard(self, session_id: str) -> None:
+        self._sessions.pop(session_id, None)

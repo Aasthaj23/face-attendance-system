@@ -1,5 +1,6 @@
 import os
 import secrets
+import sys
 from datetime import datetime
 
 from flask import Flask, jsonify, render_template
@@ -7,13 +8,13 @@ from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 
 from config import ATTENDANCE_THRESHOLD, SUBJECTS, validate_security_config
-from models import Attendance, Student, Subject, User, db
+from models import Attendance, FaceEmbedding, Student, Subject, User, db
 from routes.attendance import attendance_bp
 from routes.analytics import analytics_bp
 from routes.auth import auth_bp
 from routes.recognition import recognition_bp
 from routes.students import students_bp
-from services.face_service import known_names
+from services.face_service import known_names, load_known_embeddings
 from utils.logger import get_logger
 
 
@@ -60,7 +61,10 @@ def create_app(config_overrides=None) -> Flask:
 
     with application.app_context():
         db.create_all()
-        if User.query.count() == 0:
+        embeddings = FaceEmbedding.query.all()
+        if embeddings:
+            load_known_embeddings(embeddings)
+        if User.query.count() == 0 and not application.config.get("TESTING"):
             admin_password = os.environ.get("ADMIN_PASSWORD")
             if not admin_password:
                 admin_password = secrets.token_urlsafe(24)
@@ -105,7 +109,7 @@ def create_app(config_overrides=None) -> Flask:
     return application
 
 
-app = create_app()
+app = None if "pytest" in sys.modules else create_app()
 
 
 if __name__ == "__main__":

@@ -14,5 +14,8 @@ class Student(db.Model):
     attendance_records = db.relationship(
         "Attendance", back_populates="student", cascade="all, delete-orphan"
     )
+    face_embeddings = db.relationship(
+        "FaceEmbedding", back_populates="student", cascade="all, delete-orphan"
+    )
 
 

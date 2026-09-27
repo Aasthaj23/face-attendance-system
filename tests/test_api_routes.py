@@ -1,5 +1,5 @@
 def test_auth_route_is_namespaced(client):
-    response = client.post("/api/auth/login", json={"username": "admin", "password": "1234"})
+    response = client.post("/api/auth/login", json={"username": "test_admin", "password": "test-password"})
     assert response.status_code == 200
 
 

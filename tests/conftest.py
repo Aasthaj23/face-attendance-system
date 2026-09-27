@@ -1,24 +1,18 @@
 import base64
 import io
-import os
-
-os.environ.setdefault("JWT_SECRET_KEY", "test-jwt-secret-0123456789-abcdefgh")
-os.environ.setdefault("API_KEY", "test-api-key-0123456789-abcdefghijk")
-os.environ.setdefault("PHOTO_SECRET", "test-photo-secret-0123456789-abcdef")
 
 import pytest
 from PIL import Image
 
 from app import create_app
-from config import Config
-from models import db
+from config_testing import TestingConfig
+from models import User, db
 from routes import students as students_route
 from services import face_service
 
 
 @pytest.fixture
 def app(tmp_path, monkeypatch):
-    monkeypatch.setenv("ADMIN_PASSWORD", "1234")
     known_dir = tmp_path / "Known"
     known_dir.mkdir()
 
@@ -27,12 +21,12 @@ def app(tmp_path, monkeypatch):
     monkeypatch.setattr(face_service, "KNOWN_DIR", known_dir)
     monkeypatch.setattr(students_route, "FACE_RECOGNITION_AVAILABLE", False)
 
-    test_app = create_app({
-        "TESTING": True,
-        "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
-        "JWT_SECRET_KEY": "test-jwt-secret-0123456789-abcdefgh",
-        "API_KEY": Config.API_KEY,
-    })
+    test_app = create_app(vars(TestingConfig))
+    with test_app.app_context():
+        test_user = User(username="test_admin", role="ADMIN")
+        test_user.set_password("test-password")
+        db.session.add(test_user)
+        db.session.commit()
     yield test_app
     with test_app.app_context():
         db.session.remove()
@@ -46,7 +40,7 @@ def client(app):
 
 @pytest.fixture
 def api_headers():
-    return {"X-API-Key": Config.API_KEY}
+    return {"X-API-Key": TestingConfig.API_KEY}
 
 
 @pytest.fixture

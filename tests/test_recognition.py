@@ -1,6 +1,8 @@
 import numpy as np
 
+from models import FaceEmbedding, Student, db
 from services import face_service
+from services.face_service import deserialize_embedding, serialize_embedding
 
 
 def test_known_face_is_identified(monkeypatch):
@@ -38,3 +40,21 @@ def test_invalid_face_encoding_is_handled_safely(monkeypatch):
     name, distance = face_service.recognize_face(None)
     assert name is None
     assert distance == float("inf")
+
+
+def test_face_embedding_round_trip():
+    embedding = np.arange(128, dtype=np.float64)
+    restored = deserialize_embedding(serialize_embedding(embedding))
+    assert np.array_equal(restored, embedding)
+
+
+def test_student_has_multiple_face_embeddings(app):
+    with app.app_context():
+        student = Student(name="Multi Sample", roll_no="MULTI-001")
+        student.face_embeddings = [
+            FaceEmbedding(embedding=serialize_embedding(np.zeros(128))),
+            FaceEmbedding(embedding=serialize_embedding(np.ones(128))),
+        ]
+        db.session.add(student)
+        db.session.commit()
+        assert len(student.face_embeddings) == 2

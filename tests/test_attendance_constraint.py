@@ -3,11 +3,10 @@ from datetime import datetime
 import pytest
 from sqlalchemy.exc import IntegrityError
 
-from app import app
 from models import Attendance, Student, Subject, db
 
 
-def test_attendance_unique_student_subject_date():
+def test_attendance_unique_student_subject_date(app):
     with app.app_context():
         student = Student(name="Constraint Test", roll_no="constraint-test")
         subject = Subject(name="Constraint Test Subject")

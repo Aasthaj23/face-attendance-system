@@ -1,10 +1,7 @@
 import hashlib
 
-from flask import request
+from flask import current_app, request
 from flask_jwt_extended import verify_jwt_in_request
-
-from config import Config
-
 
 def is_jwt_valid() -> bool:
     try:
@@ -15,7 +12,7 @@ def is_jwt_valid() -> bool:
 
 
 def is_api_key_valid() -> bool:
-    return request.headers.get("X-API-Key", "") == Config.API_KEY
+    return request.headers.get("X-API-Key", "") == current_app.config.get("API_KEY", "")
 
 
 def authorized() -> bool:

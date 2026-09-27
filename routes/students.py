@@ -1,9 +1,9 @@
 from flask import Blueprint, abort, jsonify, request, send_from_directory
 
 from config import KNOWN_DIR, SUBJECTS
-from models import Attendance, Student, db
+from models import Attendance, FaceEmbedding, Student, db
 from services.attendance_service import attendance_stats
-from services.face_service import FACE_RECOGNITION_AVAILABLE, has_face, load_known_faces
+from services.face_service import FACE_RECOGNITION_AVAILABLE, has_face, load_known_embeddings
 from utils.security import authorized, photo_token
 from utils.logger import get_logger
 from utils.validation import ValidationError, validate_name, validate_photo, validate_roll_no
@@ -53,7 +53,7 @@ def handle_students():
             student = Student(name=name, roll_no=roll, photo_path=filename)
             db.session.add(student)
             db.session.commit()
-            load_known_faces()
+            load_known_embeddings(FaceEmbedding.query.all())
             logger.info("Student registered: %s (%s)", name, roll)
             return jsonify({"message": "Student registered successfully"})
         except ValidationError as error:
@@ -96,7 +96,7 @@ def delete_student(roll_no):
         photo_path.unlink()
     db.session.delete(student)
     db.session.commit()
-    load_known_faces()
+    load_known_embeddings(FaceEmbedding.query.all())
     return jsonify({"message": f"Deleted {student.name}"})
 
 
@@ -112,5 +112,5 @@ def delete_student_by_id(student_id):
         photo_path.unlink()
     db.session.delete(student)
     db.session.commit()
-    load_known_faces()
+    load_known_embeddings(FaceEmbedding.query.all())
     return jsonify({"message": f"Deleted {student.name}"})
