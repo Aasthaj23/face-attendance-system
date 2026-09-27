@@ -77,35 +77,10 @@ def create_app(config_overrides=None) -> Flask:
             bootstrap_user.set_password(admin_password)
             db.session.add(bootstrap_user)
             db.session.commit()
-        db.session.execute(db.text("""
-            DELETE FROM attendance
-            WHERE id NOT IN (
-                SELECT MIN(id)
-                FROM attendance
-                GROUP BY student_id, subject_id, date
-            )
-        """))
-        db.session.commit()
-        db.session.execute(db.text("""
-            CREATE UNIQUE INDEX IF NOT EXISTS
-            uq_attendance_student_subject_date
-            ON attendance (student_id, subject_id, date)
-        """))
-        db.session.commit()
         for subject_name in SUBJECTS:
             if not Subject.query.filter_by(name=subject_name).first():
                 db.session.add(Subject(name=subject_name))
         db.session.commit()
-        for column_sql in (
-            "ALTER TABLE attendance_record ADD COLUMN roll_no VARCHAR(50)",
-            "ALTER TABLE attendance_record ADD COLUMN subject VARCHAR(100) DEFAULT 'General'",
-        ):
-            try:
-                with db.engine.connect() as connection:
-                    connection.execute(db.text(column_sql))
-                    connection.commit()
-            except Exception:
-                pass
     return application
 
 

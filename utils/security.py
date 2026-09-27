@@ -20,4 +20,5 @@ def authorized() -> bool:
 
 
 def photo_token(roll_no: str) -> str:
-    return hashlib.sha256(f"{Config.PHOTO_SECRET}:{roll_no}".encode()).hexdigest()[:16]
+    secret = current_app.config["PHOTO_SECRET"]
+    return hashlib.sha256(f"{secret}:{roll_no}".encode()).hexdigest()[:16]

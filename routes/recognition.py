@@ -103,15 +103,21 @@ def identify_face():
     encodings = face_recognition.face_encodings(image_array, locations)
     if len(encodings) != 1:
         return jsonify({"student": None, "distance": None, "error": "Face encoding failed"}), 400
-    name, distance = recognize_face(encodings[0])
-    student = Student.query.filter(db.func.lower(Student.name) == name.lower()).first() if name else None
+    identifier, distance = recognize_face(encodings[0])
+    if isinstance(identifier, int):
+        student = db.session.get(Student, identifier)
+    else:
+        student = Student.query.filter(
+            db.func.lower(Student.name) == identifier.lower()
+        ).first() if identifier else None
     return jsonify({
+        "student_id": student.id if student else None,
         "student": {
             "id": student.id,
             "name": student.name,
             "roll_no": student.roll_no,
         } if student else None,
-        "name": name,
+        "name": student.name if student else None,
         "distance": distance,
     })
 

@@ -58,3 +58,18 @@ def test_student_has_multiple_face_embeddings(app):
         db.session.add(student)
         db.session.commit()
         assert len(student.face_embeddings) == 2
+
+
+def test_database_embedding_returns_student_id(monkeypatch):
+    monkeypatch.setattr(face_service, "FACE_RECOGNITION_AVAILABLE", True)
+    monkeypatch.setattr(face_service, "known_encodings", [np.zeros(128)])
+    monkeypatch.setattr(face_service, "known_names", ["Similar Name"])
+    monkeypatch.setattr(face_service, "known_student_ids", [42])
+    monkeypatch.setattr(
+        face_service.face_recognition,
+        "face_distance",
+        lambda known, face: np.array([0.38]),
+    )
+    identifier, distance = face_service.recognize_face(np.zeros(128))
+    assert identifier == 42
+    assert distance == 0.38

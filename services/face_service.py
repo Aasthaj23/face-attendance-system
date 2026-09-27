@@ -15,6 +15,7 @@ except ImportError:
 FACE_RECOGNITION_AVAILABLE = face_recognition is not None
 known_encodings: list = []
 known_names: list = []
+known_student_ids: list = []
 logger = get_logger(__name__)
 
 
@@ -32,16 +33,19 @@ def load_known_embeddings(records) -> None:
         return
     known_encodings.clear()
     known_names.clear()
+    known_student_ids.clear()
     for record in records:
         if record.student and record.embedding:
             known_encodings.append(deserialize_embedding(record.embedding))
             known_names.append(record.student.name)
+            known_student_ids.append(record.student_id)
     logger.info("Loaded %d database face embeddings", len(known_names))
 
 
 def load_known_faces() -> None:
     known_encodings.clear()
     known_names.clear()
+    known_student_ids.clear()
     if not FACE_RECOGNITION_AVAILABLE:
         return
 
@@ -56,6 +60,7 @@ def load_known_faces() -> None:
             if encodings:
                 known_encodings.append(encodings[0])
                 known_names.append(name)
+                known_student_ids.append(None)
         except Exception as error:
             logger.error("Face encoding failed for %s: %s", filename, error)
     logger.info("Loaded %d known faces", len(known_names))
@@ -84,7 +89,8 @@ def recognize_face(face_encoding):
 
     if best_distance <= RECOGNITION_THRESHOLD:
         logger.info("Face recognized: %s (distance=%.4f)", known_names[best_index], best_distance)
-        return known_names[best_index], best_distance
+        student_id = known_student_ids[best_index] if best_index < len(known_student_ids) else None
+        return student_id or known_names[best_index], best_distance
 
     logger.warning("Unknown face (distance=%.4f)", best_distance)
     return None, best_distance
